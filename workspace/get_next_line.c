@@ -6,7 +6,7 @@
 /*   By: akostrik <akostrik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 13:46:18 by akostrik          #+#    #+#             */
-/*   Updated: 2022/11/30 22:26:13 by akostrik         ###   ########.fr       */
+/*   Updated: 2022/11/30 23:42:24 by akostrik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,16 +21,17 @@
 // YES read malloc free
 // NO lseek() libft 
 // The helper functions in get_next_line_utils.c	
-// compiler -D BUFFER_SIZE=n for read
 // BUFFER_SIZE value is 9999? 10000000?
 // The buffer size and the line size can be of very different values
 // The buffer size will be modified by evaluators / Moulinette
+// compiler -D BUFFER_SIZE=n for read // macros
+
+// ssize_t read(int fildes, void *buf, size_t nbyte)
 
 #include "get_next_line.h"
 
-char *get_next_line(int fd);
+char *get_next_line(int fd)
 {
-	printf("get_next_line %d, buffer size = %d\n",fd);
-	// ssize_t read(int fildes, void *buf, size_t nbyte);
+	printf("get_next_line %d, buffer size = %d\n",fd,BUFFER_SIZE);
 	return ("abc");
 }
