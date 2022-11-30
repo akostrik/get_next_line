@@ -1,2 +1,9 @@
 # get_next_line
-42 School
+A project of 42 School
+
+Solo, about 70 hours
+
+How to run:
+
+```$ make```
+
