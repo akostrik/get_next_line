@@ -6,18 +6,15 @@
 #    By: akostrik <akostrik@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/11/17 13:57:13 by akostrik          #+#    #+#              #
-#    Updated: 2022/11/30 23:48:09 by akostrik         ###   ########.fr        #
+#    Updated: 2022/12/01 16:31:19 by akostrik         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
-
-# Le Makefile compile ftlib à l’aide de son Makefile, puis compiler le projet
 
 NAME    = get_next_line.a
 SRCS    = get_next_line.c get_next_line_utils.c
 OBJS    = ${SRCS:.c=.o}
 HDRS    = .
 CFLAGS  = -Wall -Wextra -Werror 
-BUFSIZE = -D BUFFER_SIZE=42
 CC      = cc
 
 all: ${NAME}
@@ -25,7 +22,7 @@ all: ${NAME}
 ${NAME}: ${OBJS}
 
 %.o: %.c 
-	${CC} ${CFLAGS} ${BUFSIZE} -c -o $@ $<
+	${CC} ${CFLAGS} -c -o $@ $<
 
 clean:
 	rm -f ${OBJS}
