@@ -6,7 +6,7 @@
 /*   By: akostrik <akostrik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 13:57:16 by akostrik          #+#    #+#             */
-/*   Updated: 2022/12/02 16:29:35 by akostrik         ###   ########.fr       */
+/*   Updated: 2022/12/02 17:36:34 by akostrik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ int main(void)
 {
 	int	fd;
 
-	fd = open("test_files_to_read/brassens.txt", O_RDONLY);
+	fd = open("test_files/brassens.txt", O_RDONLY);
 	if (fd == -1)
 	{
 		printf("can't open file\n");
@@ -30,5 +30,5 @@ int main(void)
 // EISDIR - попытка открыть каталог;
 // ELOOP - символические ссылки создали кольцо в структуре каталогов.
 
-	printf("%s\n",get_next_line(fd));
+	printf("main : [%s]\n",get_next_line(fd));
 }

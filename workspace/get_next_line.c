@@ -6,7 +6,7 @@
 /*   By: akostrik <akostrik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 13:46:18 by akostrik          #+#    #+#             */
-/*   Updated: 2022/12/02 16:31:09 by akostrik         ###   ########.fr       */
+/*   Updated: 2022/12/02 17:38:16 by akostrik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ t_buf	*initialize_buf()
 	buf -> buf = (char *)malloc(BUFFER_SIZE * sizeof(char));
 	if (buf -> buf == NULL)
 		return (NULL);
-	// memset(/0)
+	// memset('/0')
 	buf -> start = 0;
 	return (buf);
 }
@@ -68,7 +68,7 @@ ssize_t	read_to_buf(int fd, t_buf *buf)
 	return (nb_bytes1 + nb_bytes2);
 }
 
-char	*buf_to_str(t_buf buf)
+char	*buf_to_str(t_buf *buf)
 {
 	char	*str;
 	size_t	i_str;
@@ -78,7 +78,7 @@ char	*buf_to_str(t_buf buf)
 	if (str == NULL)
 		return (NULL);
 	i_str = 0;
-	i_buf = BUFFER_SIZE - buf->start;
+	i_buf = buf->start;
 	while (i_buf < BUFFER_SIZE)
 	{
 		str[i_str] = buf->buf[i_buf];
@@ -100,7 +100,6 @@ char *get_next_line(int fd)
 	t_buf		*buf;
 	ssize_t	nb_bytes;
 
-	printf("get_next_line %d, buffer size = %d\n", fd, BUFFER_SIZE);
 	buf = initialize_buf();
 	if (buf == NULL)
 		return (NULL);
