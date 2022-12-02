@@ -6,7 +6,7 @@
 /*   By: akostrik <akostrik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 13:57:16 by akostrik          #+#    #+#             */
-/*   Updated: 2022/12/01 16:41:40 by akostrik         ###   ########.fr       */
+/*   Updated: 2022/12/02 16:29:35 by akostrik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,12 @@ int main(void)
 {
 	int	fd;
 
-	fd = open("test_files_to_read/brassens.txt", O_RDONLY, mode);
+	fd = open("test_files_to_read/brassens.txt", O_RDONLY);
+	if (fd == -1)
+	{
+		printf("can't open file\n");
+		return (1); // 0 ?
+	}
 // При ошибке открытия файла возвращается -1, errno =:
 // EACCES - нет прав на сам файл или на поиск в каталоге в котором он находится;
 // ENOENT - файл не существует и не указан флаг O_CREAT;
@@ -25,5 +30,5 @@ int main(void)
 // EISDIR - попытка открыть каталог;
 // ELOOP - символические ссылки создали кольцо в структуре каталогов.
 
-	get_next_line(fd);
+	printf("%s\n",get_next_line(fd));
 }

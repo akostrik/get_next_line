@@ -1,5 +1,6 @@
 #include "get_next_line.h"
 
+/*
 int	add_to_end(t_text_portion **lst, char *buf)
 	{
 	t_text_portion	*new_elt;
@@ -56,3 +57,4 @@ void	destroy_list(t_text_portion ***lst)
 	}
 	free(*lst);
 }
+*/
