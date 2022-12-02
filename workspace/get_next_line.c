@@ -6,7 +6,7 @@
 /*   By: akostrik <akostrik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 13:46:18 by akostrik          #+#    #+#             */
-/*   Updated: 2022/12/02 17:38:16 by akostrik         ###   ########.fr       */
+/*   Updated: 2022/12/02 17:53:31 by akostrik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ char	*buf_to_str(t_buf *buf)
 	size_t	i_str;
 	size_t	i_buf;
 
-	str = (char *)malloc(BUFFER_SIZE * sizeof(char));
+	str = (char *)malloc((BUFFER_SIZE + 1)* sizeof(char));
 	if (str == NULL)
 		return (NULL);
 	i_str = 0;
@@ -92,8 +92,10 @@ char	*buf_to_str(t_buf *buf)
 		i_str++;
 		i_buf++;
 	}
+	str[i_str] = '\0';
 	return (str);
 }
+
 
 char *get_next_line(int fd)
 {
@@ -108,5 +110,6 @@ char *get_next_line(int fd)
 		return (NULL);
 	if (nb_bytes == 0)
 		return (NULL);
+	// free
 	return (buf_to_str(buf));
 }
