@@ -1,10 +1,9 @@
 a.out
-./a.out
 *.o
 workspace/*.o
+workspace_to_submit
+workspace_to_submit/*
 workspace/tester_tripouille/*
 workspace/tester_tripouille
 workspace/pft
 workspace/pft/*
-workspace_to_submit
-workspace_to_submit/*
