@@ -6,14 +6,14 @@
 #    By: akostrik <akostrik@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/11/17 14:32:35 by akostrik          #+#    #+#              #
-#    Updated: 2022/12/05 15:20:08 by akostrik         ###   ########.fr        #
+#    Updated: 2022/12/05 17:05:14 by akostrik         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 SRCS    = main.c workspace/get_next_line.c workspace/get_next_line_utils.c
 #OBJS    = ${SRCS:.c=.o}
 CC      = cc
-BUFSIZE = -D BUFFER_SIZE=12
+BUFSIZE = -D BUFFER_SIZE=18
 
 all: #${OBJS}
 	clear
