@@ -6,7 +6,7 @@
 #    By: akostrik <akostrik@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/11/17 14:32:35 by akostrik          #+#    #+#              #
-#    Updated: 2022/12/05 15:05:32 by akostrik         ###   ########.fr        #
+#    Updated: 2022/12/05 15:20:08 by akostrik         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -33,4 +33,4 @@ clean:
 	rm -f ${OBJS}
 
 re:
-	fclean all
+	fclean a
