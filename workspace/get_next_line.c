@@ -6,32 +6,29 @@
 /*   By: akostrik <akostrik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 13:46:18 by akostrik          #+#    #+#             */
-/*   Updated: 2022/12/05 14:38:43 by akostrik         ###   ########.fr       */
+/*   Updated: 2022/12/05 15:09:32 by akostrik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 // Repeated calls to get_next_line() let the text file fd, one line at a time
 // Returns the line read / NULL nothing to read / NULL error
-// A new line -> to return the current line
+// A new line -> return the current line
 // get_next_line() reads as little as possible each time 
-// File changed since the last call whereas read didn’t reach EOF -> undef. behavior
-// Binary file -> undef. behavior
-
-// Don’t read the whole file and then process each line
 // YES read malloc free
-// NO lseek() libft 
-// get_next_line_utils.c the helper functions
-
-// BUFFER_SIZE = 9999? 10000000?
-// The buffer size and the line size can be of very different values
-// The buffer size will be modified by evaluators / Moulinette
-// compiler -D BUFFER_SIZE=n for read
-// Cette macro définie à l’invocation du compilateur 
+// NO  lseek() libft 
 
 // ssize_t read(int fildes, void *buf, size_t nbyte)
-// число реально записанных байтов от 1 до BUFFER_SIZE
-// 0 EOF
-// -1 ошибка
+// число реально записанных байтов [1 .. BUFFER_SIZE], 0 EOF, -1 ошибка
+
+// compiler -D BUFFER_SIZE=n, macro définie à l’invocation du compilateur
+// BUFFER_SIZE = 9999? 10000000?
+// BUFFER_SIZE and the line size - very different values
+// BUFFER_SIZE modified by evaluators / Moulinette
+
+// get_next_line_utils.c the helper functions
+// File changed since the last call whereas read didn’t reach EOF -> undef. behavior
+// Binary file -> undef. behavior
+// Don’t read the whole file and then process each line
 
 #include "get_next_line.h"
 
@@ -136,14 +133,14 @@ char *get_next_line(int fd)
 	buf = initialize_buf();
 	if (buf == NULL)
 		return (NULL);
-	nb_bytes = read_to_buf(fd, buf);
+	// nb_bytes = read_to_buf(fd, buf);
+	printf("%s\n",get_what_possible_from_buf(buf));
+	read_to_buf(fd, buf);
 	printf("%s\n",buf_to_str(buf));
-	nb_bytes = read_to_buf(fd, buf);
-	printf("%s\n",buf_to_str(buf));
-	if (nb_bytes == -1)
+	//read_to_buf(fd, buf);
+	//printf("%s\n",buf_to_str(buf));
+	if (nb_bytes <= 0)
 		return (NULL);
-	if (nb_bytes == 0)
-		return (NULL);
-	// free
+	// free buf
 	return (buf_to_str(buf));
 }

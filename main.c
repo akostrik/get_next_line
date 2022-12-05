@@ -6,7 +6,7 @@
 /*   By: akostrik <akostrik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 13:57:16 by akostrik          #+#    #+#             */
-/*   Updated: 2022/12/05 14:39:44 by akostrik         ###   ########.fr       */
+/*   Updated: 2022/12/05 15:02:54 by akostrik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,8 @@ int main(void)
 {
 	int	fd;
 
-	fd = open("test_files/brassens.txt", O_RDONLY);
+	// fd = open("test_files/brassens.txt", O_RDONLY);
+	fd = open("test_files/abc.txt", O_RDONLY);
 	if (fd == -1)
 	{
 		printf("can't open file\n");

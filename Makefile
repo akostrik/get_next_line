@@ -6,20 +6,20 @@
 #    By: akostrik <akostrik@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/11/17 14:32:35 by akostrik          #+#    #+#              #
-#    Updated: 2022/12/01 16:30:58 by akostrik         ###   ########.fr        #
+#    Updated: 2022/12/05 15:05:32 by akostrik         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 SRCS    = main.c workspace/get_next_line.c workspace/get_next_line_utils.c
 #OBJS    = ${SRCS:.c=.o}
 CC      = cc
-BUFSIZE = -D BUFFER_SIZE=42
+BUFSIZE = -D BUFFER_SIZE=12
 
 all: #${OBJS}
 	clear
 #	(cd ./workspace && make)
 	${CC} ${BUFSIZE} ${SRCS}
-	./a.out
+	./a.out -e
 
 #%.o: %.c 
 #	${CC} ${BUFSIZE} -c -o $@ $< 
