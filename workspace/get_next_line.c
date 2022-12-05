@@ -6,7 +6,7 @@
 /*   By: akostrik <akostrik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 13:46:18 by akostrik          #+#    #+#             */
-/*   Updated: 2022/12/05 17:26:10 by akostrik         ###   ########.fr       */
+/*   Updated: 2022/12/05 17:28:37 by akostrik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,51 +86,6 @@ char	*buf_to_str(t_buf *buf) // tmp
 	return (str);
 }
 
-char	*get_what_possible_from_buf(t_buf *buf)
-{
-	char	*str1;
-	//char	*str2;
-	size_t	i_str;
-	size_t	i_buf;
-
-	str1 = (char *)malloc((buf->end_old_content - buf->start_old_content + 2)* sizeof(char));
-	if (str1 == NULL)
-		return (NULL);
-	i_str = 0;
-	i_buf = buf->start_old_content;
-	while (i_buf < buf->end_old_content)
-	{
-		str1[i_str] = buf->buf[i_buf];
-		printf("str[%zu]=[%c] %p\n",i_str,str1[i_str],&str1[i_str]);
-		if (str1[i_str] == '\n')
-		{
-			str1[i_str++] = '\0';
-			if(i_buf < buf->end_old_content) // + 1?
-			{
-				buf->start_old_content = i_buf + 1;
-				printf("free str [%c] %p\n",str1[i_str],&str1[i_str]);
-			}
-			else
-			{
-				buf->start_old_content = 0;
-				buf->end_old_content = 0;
-			}
-			return (str1);
-		}
-		i_str++;
-		i_buf++;
-	}
-	str1[i_str++] = '\0';
-	if(i_buf < buf->end_old_content) // + 1?
-			buf->start_old_content = i_buf + 1;
-	else
-		{
-			buf->start_old_content = 0;
-			buf->end_old_content = 0;
-		}
-	return (str1);
-}
-
 char	*get_what_possible_from_buf2(t_buf *buf)
 {
 	size_t	i;
@@ -144,19 +99,14 @@ char	*get_what_possible_from_buf2(t_buf *buf)
 	{
 		if (i == buf->end_old_content && buf->buf[i] == '\n')
 		{
-			//printf("1) i = %zu, buf = [%s]\n",i,&(buf->buf[backup_start_old_content]));
 			buf->start_old_content = 0;
 			buf->end_old_content = 0;
 			break ;
 		}
 		if (i == buf->end_old_content && i == 0)
-		{
-			//printf("2) i = %zu, buf = [%s]\n",i,&(buf->buf[backup_start_old_content]));
 			return ("");
-		}
 		if (i == buf->end_old_content)
 		{
-			//printf("3) i = %zu, buf = [%s]\n",i,&(buf->buf[backup_start_old_content]));
 			buf->start_old_content = 0;
 			buf->end_old_content = 0;
 			i++;
@@ -164,15 +114,12 @@ char	*get_what_possible_from_buf2(t_buf *buf)
 		}
 		if (buf->buf[i] == '\n')
 		{
-			//printf("4) i = %zu, buf = [%s]\n",i,&(buf->buf[backup_start_old_content]));
 			buf->start_old_content = i + 1;
 			break ;
 		}
-		//printf("5) i = %zu, buf = [%s]\n",i,&(buf->buf[backup_start_old_content]));
 		i++;
 	}
 	buf->buf[i] = '\0';
-	//printf("[%zu .. %zu]\n",buf->start_old_content,buf->end_old_content);
 	return (&(buf->buf[backup_start_old_content]));
 }
 
