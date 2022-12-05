@@ -6,7 +6,7 @@
 /*   By: akostrik <akostrik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 13:46:18 by akostrik          #+#    #+#             */
-/*   Updated: 2022/12/05 17:21:52 by akostrik         ###   ########.fr       */
+/*   Updated: 2022/12/05 17:26:10 by akostrik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -188,9 +188,21 @@ char *get_next_line(int fd)
 	read_to_buf(fd, buf);
 	printf("* [%s]\n",get_what_possible_from_buf2(buf));
 	printf("* [%s]\n",get_what_possible_from_buf2(buf));
+
+	printf("\n");
+	read_to_buf(fd, buf);
 	printf("* [%s]\n",get_what_possible_from_buf2(buf));
 	printf("* [%s]\n",get_what_possible_from_buf2(buf));
 	printf("* [%s]\n",get_what_possible_from_buf2(buf));
+
+	printf("\n");
+	read_to_buf(fd, buf);
+	printf("* [%s]\n",get_what_possible_from_buf2(buf));
+	printf("* [%s]\n",get_what_possible_from_buf2(buf));
+	printf("* [%s]\n",get_what_possible_from_buf2(buf));
+
+	printf("\n");
+	read_to_buf(fd, buf);
 	printf("* [%s]\n",get_what_possible_from_buf2(buf));
 	printf("* [%s]\n",get_what_possible_from_buf2(buf));
 	printf("* [%s]\n",get_what_possible_from_buf2(buf));
