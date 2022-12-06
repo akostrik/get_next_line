@@ -6,11 +6,13 @@
 /*   By: akostrik <akostrik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 13:57:16 by akostrik          #+#    #+#             */
-/*   Updated: 2022/12/05 15:02:54 by akostrik         ###   ########.fr       */
+/*   Updated: 2022/12/06 17:04:07 by akostrik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "workspace/get_next_line.h"
+
+//static char *get_next_line(int fd);
 
 int main(void)
 {
@@ -32,5 +34,5 @@ int main(void)
 // ELOOP - символические ссылки создали кольцо в структуре каталогов.
 
 	get_next_line(fd);
-	//printf("%s\n",get_next_line(fd));
+	printf("%s\n",get_next_line(fd));
 }
