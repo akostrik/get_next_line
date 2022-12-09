@@ -6,7 +6,7 @@
 /*   By: akostrik <akostrik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 12:24:00 by akostrik          #+#    #+#             */
-/*   Updated: 2022/12/06 17:35:55 by akostrik         ###   ########.fr       */
+/*   Updated: 2022/12/09 14:53:44 by akostrik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@
 typedef struct s_buf
 {
 	char		*str;
-	ssize_t	pos_1st_newline;
+	ssize_t	pos_first_newline;
 	struct s_buf		*next;
 }	t_buf;
 
