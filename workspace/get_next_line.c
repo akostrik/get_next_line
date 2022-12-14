@@ -6,7 +6,7 @@
 /*   By: akostrik <akostrik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 13:46:18 by akostrik          #+#    #+#             */
-/*   Updated: 2022/12/14 14:04:02 by akostrik         ###   ########.fr       */
+/*   Updated: 2022/12/14 14:05:27 by akostrik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,7 +143,6 @@ char *concat_buffers_and_update_lst(t_buf **lst_buf)
 		cour = cour -> prev;
 	}
 	str[i_str] = '\0';
-	printf("str = %s, ",str);
 	// free
 	return (str);
 }
@@ -166,12 +165,10 @@ char *get_next_line(int fd)
 			return (NULL);
 		if (nb_bytes == 0)
 			break ;
-		printf("buf read : ");
 		print_lst_buf(lst_buf);
 		printf("\n");
 		if ((*lst_buf)->pos_first_newline < BUFFER_SIZE)
 			break ;
 	}
-	//return (NULL);
 	return (concat_buffers_and_update_lst(lst_buf));
 }
