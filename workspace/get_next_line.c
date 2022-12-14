@@ -6,7 +6,7 @@
 /*   By: akostrik <akostrik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 13:46:18 by akostrik          #+#    #+#             */
-/*   Updated: 2022/12/14 14:05:27 by akostrik         ###   ########.fr       */
+/*   Updated: 2022/12/14 14:18:46 by akostrik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ ssize_t	read_to_buf_and_add_to_lst(int fd, t_buf **lst_buf)
 	new_buf->str = (char *)malloc(BUFFER_SIZE * sizeof(char));
 	if (new_buf->str == NULL)
 		return ((ssize_t)(-1));
-	new_buf->pos_start = 0;
+	new_buf -> pos_start = 0;
 	nb_bytes = read(fd, new_buf->str, BUFFER_SIZE);
 	i = 0;
 	while (i < nb_bytes && new_buf->str[i] != '\n')
@@ -118,6 +118,7 @@ size_t	len(t_buf **lst_buf)
 char *concat_buffers_and_update_lst(t_buf **lst_buf)
 {
 	t_buf	*cour;
+	t_buf	*to_free;
 	size_t	i_str;
 	size_t	i_buf;
 	char		*str;
@@ -130,7 +131,7 @@ char *concat_buffers_and_update_lst(t_buf **lst_buf)
 	cour = *lst_buf;
 	i_str = 0;
 	while (cour != NULL && cour -> next != NULL)
-		cour = cour -> next; ////////////////////////////
+		cour = cour -> next;
 	while (cour != NULL)
 	{
 		i_buf = cour -> pos_start;
@@ -140,10 +141,16 @@ char *concat_buffers_and_update_lst(t_buf **lst_buf)
 			i_str++;
 			i_buf++;
 		}
+		to_free = cour;
 		cour = cour -> prev;
+		//free(to_free -> str); ////////////////////////////////
+		//free(to_free); // free(next)
+		if (cour != NULL)
+			cour -> next = NULL;
+		//if (cour -> pos_first_newline) //////////////////
+		//	cour -> pos_start  = cour -> pos_first_newline + 1; ///////////////////////
 	}
 	str[i_str] = '\0';
-	// free
 	return (str);
 }
 
