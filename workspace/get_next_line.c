@@ -6,7 +6,7 @@
 /*   By: akostrik <akostrik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 13:46:18 by akostrik          #+#    #+#             */
-/*   Updated: 2022/12/14 14:03:09 by akostrik         ###   ########.fr       */
+/*   Updated: 2022/12/14 14:04:02 by akostrik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -172,6 +172,6 @@ char *get_next_line(int fd)
 		if ((*lst_buf)->pos_first_newline < BUFFER_SIZE)
 			break ;
 	}
-	return (NULL);
-	//return (concat_buffers_and_update_lst(lst_buf));
+	//return (NULL);
+	return (concat_buffers_and_update_lst(lst_buf));
 }
