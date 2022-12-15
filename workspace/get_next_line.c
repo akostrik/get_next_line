@@ -6,7 +6,7 @@
 /*   By: akostrik <akostrik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 13:46:18 by akostrik          #+#    #+#             */
-/*   Updated: 2022/12/14 14:18:46 by akostrik         ###   ########.fr       */
+/*   Updated: 2022/12/15 13:16:45 by akostrik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ void	print_lst_buf(t_buf **lst_buf)
 	t_buf	*cour;
 	size_t	i;
 
-	printf("buffers: ");
+	printf("buffers:\n");
 	if (lst_buf == NULL)
 	{
 		printf("list = NULL\n");
@@ -51,9 +51,9 @@ void	print_lst_buf(t_buf **lst_buf)
 	cour = *lst_buf;
 	while (cour != NULL)
 	{
-		i = cour -> pos_start;
-		printf("[");
-		while (i < BUFFER_SIZE)
+		printf("%p ",cour);
+		i = 0;
+		while (i <= cour -> last_pos)
 		{
 			if (cour->str[i] == '\n')
 				printf("*");
@@ -61,30 +61,38 @@ void	print_lst_buf(t_buf **lst_buf)
 				printf("%c",cour->str[i]);
 			i++;
 		}
-		printf("] ");
+		printf(" %zu %zu %zu\n", cour -> first_pos, cour -> first_newline_pos, cour -> last_pos);
 		cour = cour -> next;
 	}
-	printf("\n");
+	printf(" *\n");
+}
+
+size_t first_newline_pos_f(t_buf	*buf)
+{
+	ssize_t	i;
+
+	i = buf -> first_pos;
+	while (i <= buf -> last_pos && buf->str[i] != '\n')
+		i++;
+	return (i);
 }
 
 ssize_t	read_to_buf_and_add_to_lst(int fd, t_buf **lst_buf)
 {
 	ssize_t	nb_bytes;
-	ssize_t	i;
 	t_buf	*new_buf;
 
+	printf("read_to_buf_and_add_to_lst\n");
 	new_buf = (t_buf *)malloc(sizeof(t_buf)); /// точно надо ?
 	if (new_buf == NULL)
 		return ((ssize_t)(-1));
 	new_buf->str = (char *)malloc(BUFFER_SIZE * sizeof(char));
 	if (new_buf->str == NULL)
 		return ((ssize_t)(-1));
-	new_buf -> pos_start = 0;
 	nb_bytes = read(fd, new_buf->str, BUFFER_SIZE);
-	i = 0;
-	while (i < nb_bytes && new_buf->str[i] != '\n')
-		i++;
-	new_buf -> pos_first_newline = i;
+	new_buf -> first_pos = 0;
+	new_buf -> last_pos = nb_bytes - 1;
+	new_buf -> first_newline_pos = first_newline_pos_f(new_buf);
 	new_buf -> prev = NULL;
 	if (lst_buf == NULL)
 		new_buf->next = NULL;
@@ -98,7 +106,7 @@ ssize_t	read_to_buf_and_add_to_lst(int fd, t_buf **lst_buf)
 	return (nb_bytes);
 }
 
-size_t	len(t_buf **lst_buf)
+size_t	string_len(t_buf **lst_buf)
 {
 	t_buf	*cour;
 	size_t	len;
@@ -106,9 +114,10 @@ size_t	len(t_buf **lst_buf)
 	if (lst_buf == NULL)
 		return (0);
 	cour = *lst_buf;
+	len = 0;
 	while (cour != NULL)
 	{
-		len += cour -> pos_first_newline - cour -> pos_start;
+		len += cour -> first_newline_pos - cour -> first_pos;
 		cour = cour -> next;
 	}
 	len++;
@@ -120,12 +129,14 @@ char *concat_buffers_and_update_lst(t_buf **lst_buf)
 	t_buf	*cour;
 	t_buf	*to_free;
 	size_t	i_str;
-	size_t	i_buf;
+	size_t	i;
 	char		*str;
 
-	if (lst_buf == NULL || *lst_buf == NULL) //
+	printf("concat_buffers ");
+	print_lst_buf(lst_buf);
+	if (lst_buf == NULL || *lst_buf == NULL)
 		return ("");
-	str = (char *)malloc(len(lst_buf) + 1);
+	str = (char *)malloc(string_len(lst_buf));
 	if (str == NULL)
 		return (NULL);
 	cour = *lst_buf;
@@ -134,21 +145,28 @@ char *concat_buffers_and_update_lst(t_buf **lst_buf)
 		cour = cour -> next;
 	while (cour != NULL)
 	{
-		i_buf = cour -> pos_start;
-		while (i_buf < cour -> pos_first_newline)
+		i = cour -> first_pos;
+		printf("cour = %p, copy from %zu to %zu -> ",cour,cour -> first_pos,cour -> first_newline_pos);
+		while (i < cour -> first_newline_pos && i <= cour -> last_pos)
 		{
-			str[i_str] = cour -> str[i_buf];
+			str[i_str] = cour -> str[i];
 			i_str++;
-			i_buf++;
+			i++;
 		}
+		printf("str = %s\n",str);
+		cour -> first_pos = cour -> first_newline_pos + 1;
+		cour -> first_newline_pos = first_newline_pos_f(cour);
+		print_lst_buf(lst_buf);
 		to_free = cour;
 		cour = cour -> prev;
-		//free(to_free -> str); ////////////////////////////////
+		//printf("free %p\n",to_free);
+		//if ()
+		//	free(to_free -> str); ////////////////////////////////
 		//free(to_free); // free(next)
 		if (cour != NULL)
 			cour -> next = NULL;
-		//if (cour -> pos_first_newline) //////////////////
-		//	cour -> pos_start  = cour -> pos_first_newline + 1; ///////////////////////
+		if (cour != NULL && i < cour -> last_pos)
+			break; // after free
 	}
 	str[i_str] = '\0';
 	return (str);
@@ -165,17 +183,21 @@ char *get_next_line(int fd)
 		if (lst_buf == NULL)
 			return (NULL);
 	}
-	while (1)
-	{
-		nb_bytes = read_to_buf_and_add_to_lst(fd, lst_buf);
-		if (nb_bytes == -1)
-			return (NULL);
-		if (nb_bytes == 0)
-			break ;
-		print_lst_buf(lst_buf);
-		printf("\n");
-		if ((*lst_buf)->pos_first_newline < BUFFER_SIZE)
-			break ;
-	}
+	//if (lst_buf != NULL)
+		//printf("if %zu - %zu > %d\n", (*lst_buf)->last_pos, (*lst_buf)->first_pos, BUFFER_SIZE); //////////////////////
+	printf("get_next_line ");
+	print_lst_buf(lst_buf);
+	//printf("%zu - %zu + 1 <= %d ? %d\n",(*lst_buf)->last_pos, (*lst_buf)->first_pos, BUFFER_SIZE,(*lst_buf)->last_pos - (*lst_buf)->first_pos + 1 <= BUFFER_SIZE);
+	if (lst_buf == NULL || *lst_buf == NULL || ((*lst_buf)->last_pos - (*lst_buf)->first_pos + 1 <= BUFFER_SIZE) || (*lst_buf)->first_newline_pos > (*lst_buf) -> last_pos)
+		while (1)
+		{
+			nb_bytes = read_to_buf_and_add_to_lst(fd, lst_buf);
+			if (nb_bytes == -1)
+				return (NULL);
+			if (nb_bytes == 0)
+				break ;
+			if ((*lst_buf)->first_newline_pos <= (*lst_buf) -> last_pos)
+				break ;
+		}
 	return (concat_buffers_and_update_lst(lst_buf));
 }
