@@ -6,7 +6,7 @@
 /*   By: akostrik <akostrik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 13:46:18 by akostrik          #+#    #+#             */
-/*   Updated: 2022/12/26 21:29:15 by akostrik         ###   ########.fr       */
+/*   Updated: 2022/12/27 00:56:31 by akostrik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,10 +71,14 @@ void	print_lst_buf(t_buf **lst_buf)
 				printf("%c",cour->str[i]);
 			i++;
 		}
-		printf(" %zu %zu %zu\n", cour -> first_pos, cour -> first_newline_pos, cour -> last_pos);
+		printf(" %zu %zu %zu", cour -> first_pos, cour -> first_newline_pos, cour -> last_pos);
+		if (cour->eof_reached == 1)
+			printf(" EOF");
+		else
+			printf(" non EOF");
+		printf("\n");
 		cour = cour -> next;
 	}
-	printf("\n");
 }
 
 size_t first_newline_pos_f(t_buf	*buf)
@@ -99,12 +103,24 @@ ssize_t	read_to_buf_and_add_to_lst(int fd, t_buf **lst_buf)
 	if (new_buf->str == NULL)
 		return ((ssize_t)(-1));
 	nb_bytes = read(fd, new_buf->str, BUFFER_SIZE);
-	if (nb_bytes != 0)
+	if (nb_bytes == -1)
+		return ((ssize_t)(-1));
+	if (nb_bytes == 0)
+	{
+		new_buf -> eof_reached = 1;
+		//printf("********************** EOF\n");
+	}
+	if (nb_bytes > 0)
 	{
 		new_buf -> first_pos = 0;
 		new_buf -> last_pos = nb_bytes - 1;
 		new_buf -> first_newline_pos = first_newline_pos_f(new_buf);
 		new_buf -> prev = NULL;
+		//printf("********************** if %zd < %d EOF\n",nb_bytes, BUFFER_SIZE);
+		if (nb_bytes < BUFFER_SIZE)
+			new_buf -> eof_reached = 1;
+		else
+			new_buf -> eof_reached = 0;
 		if (lst_buf == NULL)
 			new_buf->next = NULL;
 		else
@@ -143,7 +159,7 @@ char *concat_buffers_and_update_lst(t_buf **lst_buf)
 	size_t	i;
 	char		*str;
 
-	if (*lst_buf == NULL) // lst_buf == NULL || 
+	if (*lst_buf == NULL)
 		return ("");
 	str = (char *)malloc(string_len(lst_buf));
 	if (str == NULL)
@@ -154,25 +170,38 @@ char *concat_buffers_and_update_lst(t_buf **lst_buf)
 		cour = cour -> next;
 	while (cour != NULL)
 	{
+		//printf("\nwhile ");
+		//print_lst_buf(lst_buf);
+		//printf("cour = %p\n",cour);
 		i = cour -> first_pos;
-		while (i < cour -> first_newline_pos && i <= cour -> last_pos)
+		while (i <= cour -> first_newline_pos && i <= cour -> last_pos)
 		{
 			str[i_str] = cour -> str[i];
 			i_str++;
 			i++;
 		}
+		//printf("str = %s\n",str);
 		cour -> first_pos = cour -> first_newline_pos + 1;
 		cour -> first_newline_pos = first_newline_pos_f(cour);
+		//printf("i=%zd, cour -> last_pos = %zd",i, cour -> last_pos);
+		if (i <= cour -> last_pos) // в буфере что-то есть
+		{
+			//printf(" break\n");
+			//print_lst_buf(lst_buf);
+			break;
+		}
+		//printf("\n");
 		to_free = cour;
-		cour = cour -> prev;
 		//printf("free %p\n",to_free);
-		//if ()
-		//	free(to_free -> str); ////////////////////////////////
-		//free(to_free); // free(next)
-		if (cour != NULL)
-			cour -> next = NULL;
-		if (cour != NULL && i < cour -> last_pos)
-			break; // after free
+		free(to_free->str);
+		free(to_free);
+		cour = cour -> prev;
+		if (cour == NULL)
+		{
+			*lst_buf = NULL;
+			break;
+		}
+		cour -> next = NULL;
 	}
 	str[i_str] = '\0';
 	return (str);
@@ -191,15 +220,29 @@ char *get_next_line(int fd)
 			return (NULL);
 	}
 	first_iteration = 1;
+	//printf("\nget_next_line ");
+	//print_lst_buf(lst_buf);
 	while (1)
 	{
 		if (*lst_buf != NULL && (*lst_buf)->first_newline_pos <= (*lst_buf) -> last_pos)
+		{
+			//printf("get_next_line break в буфере что-то осталось\n");
 			break ;
+		}
 		nb_bytes = read_to_buf_and_add_to_lst(fd, lst_buf);
+		//printf("nb_bytes = %zd\n",nb_bytes);
 		if (nb_bytes == -1)
 			return (NULL);
+		if (*lst_buf != NULL && (*lst_buf)->eof_reached == 1)
+		{
+			//printf("get_next_line break EOF\n");
+			break ;
+		}
 		if (nb_bytes == 0 && first_iteration == 1)
-			return (NULL);
+		{
+			//printf("get_next_line break EOF\n");
+			break ; // return (NULL);
+		}
 		if (nb_bytes == 0)
 			break ;
 		first_iteration = 0;
