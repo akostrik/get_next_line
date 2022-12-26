@@ -6,7 +6,7 @@
 /*   By: akostrik <akostrik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 13:57:16 by akostrik          #+#    #+#             */
-/*   Updated: 2022/12/26 20:47:00 by akostrik         ###   ########.fr       */
+/*   Updated: 2022/12/26 21:33:14 by akostrik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ int main(void)
 		printf("can't open file\n");
 		return (1); // 0 ?
 	}
-// При ошибке открытия файла возвращается -1, errno =:
+// При ошибке открытия файла возвращается -1, errno:
 // EACCES - нет прав на сам файл или на поиск в каталоге в котором он находится;
 // ENOENT - файл не существует и не указан флаг O_CREAT;
 // EEXIST - файл существует и указаны флаги O_CREAT+O_EXCL;
@@ -33,13 +33,25 @@ int main(void)
 // EISDIR - попытка открыть каталог;
 // ELOOP - символические ссылки создали кольцо в структуре каталогов.
 
-	printf("[%s]\n",get_next_line(fd));
-	printf("[%s]\n",get_next_line(fd));
-	printf("[%s]\n",get_next_line(fd));
-	printf("[%s]\n",get_next_line(fd));
-	printf("[%s]\n",get_next_line(fd));
-	printf("[%s]\n",get_next_line(fd));
-	printf("[%s]\n",get_next_line(fd));
-	printf("[%s]\n",get_next_line(fd));
-	printf("[%s]\n",get_next_line(fd));
+	printf("%s\n",get_next_line(fd));
+	printf("%s\n",get_next_line(fd));
+	printf("%s\n",get_next_line(fd));
+	printf("%s\n",get_next_line(fd));
+	printf("%s\n",get_next_line(fd));
+	printf("%s\n",get_next_line(fd));
+	printf("%s\n",get_next_line(fd));
+	printf("%s\n",get_next_line(fd));
+	printf("%s\n",get_next_line(fd));
+	printf("%s\n",get_next_line(fd));
+	printf("%s\n",get_next_line(fd));
+	printf("%s\n",get_next_line(fd));
+	printf("%s\n",get_next_line(fd));
+	printf("%s\n",get_next_line(fd));
+	printf("%s\n",get_next_line(fd));
+	printf("%s\n",get_next_line(fd));
+	printf("%s\n",get_next_line(fd));
+	printf("%s\n",get_next_line(fd));
+	printf("%s\n",get_next_line(fd));
+	printf("%s\n",get_next_line(fd));
+	printf("%s\n",get_next_line(fd));
 }
