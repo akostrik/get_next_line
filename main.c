@@ -6,7 +6,7 @@
 /*   By: akostrik <akostrik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 13:57:16 by akostrik          #+#    #+#             */
-/*   Updated: 2022/12/27 17:36:25 by akostrik         ###   ########.fr       */
+/*   Updated: 2022/12/27 21:54:00 by akostrik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,7 @@ int main(void)
 // EISDIR - попытка открыть каталог;
 // ELOOP - символические ссылки создали кольцо в структуре каталогов.
 
-	printf("[%s]",get_next_line(fd));
+	printf("main [%s]\n",get_next_line(fd));
 	printf("\n-----------------\n");
-	printf("[%s]\n",get_next_line(fd));
-	printf("\n-----------------\n");
-	printf("[%s]\n",get_next_line(fd));
+	printf("main [%s]\n",get_next_line(fd));
 }
