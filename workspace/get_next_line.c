@@ -6,7 +6,7 @@
 /*   By: akostrik <akostrik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 13:46:18 by akostrik          #+#    #+#             */
-/*   Updated: 2022/12/27 23:25:46 by akostrik         ###   ########.fr       */
+/*   Updated: 2022/12/27 23:32:52 by akostrik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,10 +98,8 @@ ssize_t first_newline_pos_f(t_buf	*buf)
 {
 	ssize_t	i;
 
-	if (buf -> last_pos == -1) // 0 ?
-		return (1);
 	i = buf -> first_pos;
-	while (i <= buf -> last_pos && buf->str[i] != '\n' && buf->str[i] != EOF)
+	while (i <= buf -> last_pos && buf->str[i] != '\n')
 		i++;
 	return (i);
 }
@@ -151,21 +149,6 @@ ssize_t	read_to_buf_and_add_to_lst(int fd, t_buf **lst_buf)
 	return (nb_bytes);
 }
 
-size_t	string_len(t_buf **lst_buf)
-{
-	t_buf	*cour;
-	size_t	len;
-
-	cour = *lst_buf;
-	len = 0;
-	while (cour != NULL)
-	{
-		len += cour -> first_newline_pos - cour -> first_pos;
-		cour = cour -> next;
-	}
-	return (len + 2);
-}
-
 char *concat_buffers_and_update_lst(t_buf **lst_buf)
 {
 	t_buf	*cour;
@@ -180,10 +163,15 @@ char *concat_buffers_and_update_lst(t_buf **lst_buf)
 		return(NULL);
 
 	cour = *lst_buf;
+	i = 0;
 	while (cour != NULL && cour -> next != NULL) // заодно посчитать ддину
+	{
+		i += cour -> first_newline_pos - cour -> first_pos;
 		cour = cour -> next;
-		
-	str = (char *)malloc(string_len(lst_buf));
+	}	
+	i += cour -> first_newline_pos - cour -> first_pos;
+
+	str = (char *)malloc(i + 2);
 	if (str == NULL)
 		return (NULL);
 	i_str = 0;
