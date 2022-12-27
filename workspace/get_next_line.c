@@ -6,7 +6,7 @@
 /*   By: akostrik <akostrik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 13:46:18 by akostrik          #+#    #+#             */
-/*   Updated: 2022/12/27 23:32:52 by akostrik         ###   ########.fr       */
+/*   Updated: 2022/12/27 23:40:34 by akostrik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,8 +81,6 @@ void free_lst_buf(t_buf **lst_buf)
 	t_buf	*cour;
 	t_buf	*next;
 
-	if (lst_buf == NULL)
-		return ;
 	cour = *lst_buf;
 	while (cour != NULL)
 	{
@@ -212,7 +210,6 @@ char *get_next_line(int fd)
 {
 	static t_buf	**lst_buf = NULL;
 	ssize_t	nb_bytes;
-	size_t		i;
 	char		*str;
 
 	if (lst_buf == NULL)
@@ -222,12 +219,11 @@ char *get_next_line(int fd)
 			return (NULL);
 		*lst_buf = NULL;
 	}
-	i = 0;
 	while (1)
 	{
 		if (*lst_buf != NULL && (*lst_buf)->first_newline_pos <= (*lst_buf) -> last_pos) // присутствует  \n
 			break ;
-		if (*lst_buf != NULL && (*lst_buf)->str[(*lst_buf)->last_pos] == EOF) // присутствует EOF
+		if (*lst_buf != NULL && (*lst_buf)->str[(*lst_buf)->last_pos] == EOF)
 			break ;
 		nb_bytes = read_to_buf_and_add_to_lst(fd, lst_buf);
 		if (nb_bytes == -1)
@@ -235,13 +231,6 @@ char *get_next_line(int fd)
 			free_lst_buf(lst_buf);
 			return (NULL);
 		}
-		if (nb_bytes == 0 && i == 0)
-			break;
-		if (nb_bytes == 0) // присутствует EOF
-			break ;
-		if (*lst_buf != NULL && (*lst_buf)->str[(*lst_buf)->last_pos] == EOF) // присутствует EOF
-			break ;
-		i++;
 	}
 	str = concat_buffers_and_update_lst(lst_buf);
 	if (*lst_buf != NULL && (*lst_buf) -> first_pos ==  (*lst_buf) -> last_pos && (*lst_buf)->str[(*lst_buf)->last_pos] == EOF)
