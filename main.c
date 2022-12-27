@@ -6,7 +6,7 @@
 /*   By: akostrik <akostrik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 13:57:16 by akostrik          #+#    #+#             */
-/*   Updated: 2022/12/26 23:59:44 by akostrik         ###   ########.fr       */
+/*   Updated: 2022/12/27 01:06:39 by akostrik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,5 +36,6 @@ int main(void)
 	printf("%s",get_next_line(fd));
 	printf("%s",get_next_line(fd));
 	printf("%s",get_next_line(fd));
-
+	printf("%s",get_next_line(fd));
+	printf("%s",get_next_line(fd));
 }

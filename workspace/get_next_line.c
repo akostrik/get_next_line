@@ -6,7 +6,7 @@
 /*   By: akostrik <akostrik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 13:46:18 by akostrik          #+#    #+#             */
-/*   Updated: 2022/12/27 00:56:31 by akostrik         ###   ########.fr       */
+/*   Updated: 2022/12/27 01:29:04 by akostrik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,17 +106,13 @@ ssize_t	read_to_buf_and_add_to_lst(int fd, t_buf **lst_buf)
 	if (nb_bytes == -1)
 		return ((ssize_t)(-1));
 	if (nb_bytes == 0)
-	{
 		new_buf -> eof_reached = 1;
-		//printf("********************** EOF\n");
-	}
 	if (nb_bytes > 0)
 	{
 		new_buf -> first_pos = 0;
 		new_buf -> last_pos = nb_bytes - 1;
 		new_buf -> first_newline_pos = first_newline_pos_f(new_buf);
 		new_buf -> prev = NULL;
-		//printf("********************** if %zd < %d EOF\n",nb_bytes, BUFFER_SIZE);
 		if (nb_bytes < BUFFER_SIZE)
 			new_buf -> eof_reached = 1;
 		else
@@ -170,9 +166,6 @@ char *concat_buffers_and_update_lst(t_buf **lst_buf)
 		cour = cour -> next;
 	while (cour != NULL)
 	{
-		//printf("\nwhile ");
-		//print_lst_buf(lst_buf);
-		//printf("cour = %p\n",cour);
 		i = cour -> first_pos;
 		while (i <= cour -> first_newline_pos && i <= cour -> last_pos)
 		{
@@ -180,19 +173,11 @@ char *concat_buffers_and_update_lst(t_buf **lst_buf)
 			i_str++;
 			i++;
 		}
-		//printf("str = %s\n",str);
 		cour -> first_pos = cour -> first_newline_pos + 1;
 		cour -> first_newline_pos = first_newline_pos_f(cour);
-		//printf("i=%zd, cour -> last_pos = %zd",i, cour -> last_pos);
 		if (i <= cour -> last_pos) // в буфере что-то есть
-		{
-			//printf(" break\n");
-			//print_lst_buf(lst_buf);
 			break;
-		}
-		//printf("\n");
 		to_free = cour;
-		//printf("free %p\n",to_free);
 		free(to_free->str);
 		free(to_free);
 		cour = cour -> prev;
@@ -211,7 +196,8 @@ char *get_next_line(int fd)
 {
 	static t_buf	**lst_buf = NULL;
 	ssize_t	nb_bytes;
-	int	first_iteration;
+	size_t		i;
+	char		*str;
 
 	if (lst_buf == NULL)
 	{
@@ -219,33 +205,24 @@ char *get_next_line(int fd)
 		if (lst_buf == NULL)
 			return (NULL);
 	}
-	first_iteration = 1;
-	//printf("\nget_next_line ");
-	//print_lst_buf(lst_buf);
+	i = 0;
 	while (1)
 	{
 		if (*lst_buf != NULL && (*lst_buf)->first_newline_pos <= (*lst_buf) -> last_pos)
-		{
-			//printf("get_next_line break в буфере что-то осталось\n");
 			break ;
-		}
 		nb_bytes = read_to_buf_and_add_to_lst(fd, lst_buf);
-		//printf("nb_bytes = %zd\n",nb_bytes);
 		if (nb_bytes == -1)
 			return (NULL);
-		if (*lst_buf != NULL && (*lst_buf)->eof_reached == 1)
-		{
-			//printf("get_next_line break EOF\n");
-			break ;
-		}
-		if (nb_bytes == 0 && first_iteration == 1)
-		{
-			//printf("get_next_line break EOF\n");
-			break ; // return (NULL);
-		}
+		if (nb_bytes == 0 && i == 0)
+			return (NULL);
 		if (nb_bytes == 0)
 			break ;
-		first_iteration = 0;
+		if (*lst_buf != NULL && (*lst_buf)->eof_reached == 1)
+			break ;
+		i++;
 	}
-	return (concat_buffers_and_update_lst(lst_buf));
+	str = concat_buffers_and_update_lst(lst_buf);
+	if (*lst_buf != NULL && (*lst_buf)->eof_reached == 1)
+		free(lst_buf);
+	return (str);
 }
