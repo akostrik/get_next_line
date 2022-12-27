@@ -6,7 +6,7 @@
 /*   By: akostrik <akostrik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 13:46:18 by akostrik          #+#    #+#             */
-/*   Updated: 2022/12/28 00:06:10 by akostrik         ###   ########.fr       */
+/*   Updated: 2022/12/28 00:50:33 by akostrik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,7 +156,6 @@ char *concat_buffers_and_update_lst(t_buf **lst_buf)
 		return (""); // ?
 	if ((*lst_buf) -> first_pos == (*lst_buf) -> last_pos && (*lst_buf)->str[(*lst_buf)->last_pos] == EOF && (*lst_buf)->next == NULL)
 		return(NULL);
-
 	cour = *lst_buf;
 	i = 0;
 	while (cour != NULL && cour -> next != NULL)
@@ -165,7 +164,6 @@ char *concat_buffers_and_update_lst(t_buf **lst_buf)
 		cour = cour -> next;
 	}	
 	i += cour -> first_newline_pos - cour -> first_pos;
-
 	str = (char *)malloc(i + 2);
 	if (str == NULL)
 		return (NULL);
@@ -174,17 +172,14 @@ char *concat_buffers_and_update_lst(t_buf **lst_buf)
 	{
 		i = cour -> first_pos;
 		while (i <= cour -> first_newline_pos && i <= cour -> last_pos)
-		{
-			str[i_str] = cour -> str[i];
-			i_str++;
-			i++;
-		}
+			str[i_str++] = cour -> str[i++];
 		cour -> first_pos = cour -> first_newline_pos + 1;
 		cour -> first_newline_pos = cour -> first_pos;
 		while (cour -> first_newline_pos <= cour -> last_pos && cour->str[cour -> first_newline_pos] != '\n')
 			cour -> first_newline_pos++;
 		if (i <= cour -> last_pos)
 				break ;
+				
 		if (cour -> prev == NULL)
 		{
 			free(cour->str);
@@ -198,10 +193,9 @@ char *concat_buffers_and_update_lst(t_buf **lst_buf)
 		free(to_free->str);
 		free(to_free);
 	}
+	str[i_str] = '\0';
 	if (str[i_str - 1] == EOF) 
 		str[i_str - 1] = '\0';
-	else
-		str[i_str] = '\0';
 	return (str);
 }
 
