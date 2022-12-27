@@ -6,7 +6,7 @@
 /*   By: akostrik <akostrik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 13:46:18 by akostrik          #+#    #+#             */
-/*   Updated: 2022/12/27 01:29:04 by akostrik         ###   ########.fr       */
+/*   Updated: 2022/12/27 02:26:58 by akostrik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@
 
 #include "get_next_line.h"
 #include <string.h>
-
+/*
 void	print_lst_buf(t_buf **lst_buf)
 {
 	t_buf	*cour;
@@ -80,10 +80,10 @@ void	print_lst_buf(t_buf **lst_buf)
 		cour = cour -> next;
 	}
 }
-
+*/
 size_t first_newline_pos_f(t_buf	*buf)
 {
-	ssize_t	i;
+	size_t	i;
 
 	i = buf -> first_pos;
 	while (i <= buf -> last_pos && buf->str[i] != '\n')
@@ -98,13 +98,22 @@ ssize_t	read_to_buf_and_add_to_lst(int fd, t_buf **lst_buf)
 
 	new_buf = (t_buf *)malloc(sizeof(t_buf));
 	if (new_buf == NULL)
+	{
 		return ((ssize_t)(-1));
+	}
 	new_buf->str = (char *)malloc(BUFFER_SIZE * sizeof(char));
 	if (new_buf->str == NULL)
+	{
+		free(new_buf);
 		return ((ssize_t)(-1));
+	}
 	nb_bytes = read(fd, new_buf->str, BUFFER_SIZE);
 	if (nb_bytes == -1)
+	{
+		free(new_buf -> str);
+		free(new_buf);
 		return ((ssize_t)(-1));
+	}
 	if (nb_bytes == 0)
 		new_buf -> eof_reached = 1;
 	if (nb_bytes > 0)
@@ -192,6 +201,25 @@ char *concat_buffers_and_update_lst(t_buf **lst_buf)
 	return (str);
 }
 
+void free_lst_buf(t_buf ***lst_buf)
+{
+	t_buf	*cour;
+	t_buf	*next;
+
+	if (*lst_buf == NULL)
+		return ;
+	cour = **lst_buf;
+	while (cour != NULL)
+	{
+		next = cour -> next;
+		//if (i <= cour -> last_pos) // в буфере что-то есть
+		free(cour->str);
+		free(cour);
+		cour = next;
+	}
+	//free (*lst_buf);
+}
+
 char *get_next_line(int fd)
 {
 	static t_buf	**lst_buf = NULL;
@@ -204,17 +232,24 @@ char *get_next_line(int fd)
 		lst_buf = (t_buf **)malloc(sizeof(t_buf *));
 		if (lst_buf == NULL)
 			return (NULL);
+		*lst_buf = NULL;
 	}
 	i = 0;
 	while (1)
 	{
-		if (*lst_buf != NULL && (*lst_buf)->first_newline_pos <= (*lst_buf) -> last_pos)
+		if (lst_buf != NULL && *lst_buf != NULL && (*lst_buf)->first_newline_pos <= (*lst_buf) -> last_pos)
 			break ;
 		nb_bytes = read_to_buf_and_add_to_lst(fd, lst_buf);
 		if (nb_bytes == -1)
+		{
+			free_lst_buf(&lst_buf);
 			return (NULL);
+		}
 		if (nb_bytes == 0 && i == 0)
+		{
+			free_lst_buf(&lst_buf);
 			return (NULL);
+		}
 		if (nb_bytes == 0)
 			break ;
 		if (*lst_buf != NULL && (*lst_buf)->eof_reached == 1)
@@ -223,6 +258,6 @@ char *get_next_line(int fd)
 	}
 	str = concat_buffers_and_update_lst(lst_buf);
 	if (*lst_buf != NULL && (*lst_buf)->eof_reached == 1)
-		free(lst_buf);
+		free_lst_buf(&lst_buf);
 	return (str);
 }
