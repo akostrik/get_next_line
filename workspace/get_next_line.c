@@ -6,7 +6,7 @@
 /*   By: akostrik <akostrik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 13:46:18 by akostrik          #+#    #+#             */
-/*   Updated: 2022/12/27 23:40:34 by akostrik         ###   ########.fr       */
+/*   Updated: 2022/12/27 23:51:29 by akostrik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,15 +81,20 @@ void free_lst_buf(t_buf **lst_buf)
 	t_buf	*cour;
 	t_buf	*next;
 
-	cour = *lst_buf;
-	while (cour != NULL)
+	if (*lst_buf == NULL)
+		return ;
+	if ((*lst_buf) -> first_pos ==  (*lst_buf) -> last_pos && (*lst_buf)->str[(*lst_buf)->last_pos] == EOF)
 	{
-		next = cour -> next;
-		free(cour->str);
-		free(cour);
-		cour = next;
+		cour = *lst_buf;
+		while (cour != NULL)
+		{
+			next = cour -> next;
+			free(cour->str);
+			free(cour);
+			cour = next;
+		}
+		*lst_buf = NULL;
 	}
-	*lst_buf = NULL;
 }
 
 ssize_t first_newline_pos_f(t_buf	*buf)
@@ -209,7 +214,6 @@ char *concat_buffers_and_update_lst(t_buf **lst_buf)
 char *get_next_line(int fd)
 {
 	static t_buf	**lst_buf = NULL;
-	ssize_t	nb_bytes;
 	char		*str;
 
 	if (lst_buf == NULL)
@@ -221,19 +225,17 @@ char *get_next_line(int fd)
 	}
 	while (1)
 	{
-		if (*lst_buf != NULL && (*lst_buf)->first_newline_pos <= (*lst_buf) -> last_pos) // присутствует  \n
+		if (*lst_buf != NULL && (*lst_buf)->first_newline_pos <= (*lst_buf) -> last_pos)
 			break ;
 		if (*lst_buf != NULL && (*lst_buf)->str[(*lst_buf)->last_pos] == EOF)
 			break ;
-		nb_bytes = read_to_buf_and_add_to_lst(fd, lst_buf);
-		if (nb_bytes == -1)
+		if (read_to_buf_and_add_to_lst(fd, lst_buf) == -1)
 		{
 			free_lst_buf(lst_buf);
 			return (NULL);
 		}
 	}
 	str = concat_buffers_and_update_lst(lst_buf);
-	if (*lst_buf != NULL && (*lst_buf) -> first_pos ==  (*lst_buf) -> last_pos && (*lst_buf)->str[(*lst_buf)->last_pos] == EOF)
-		free_lst_buf(lst_buf);
+	free_lst_buf(lst_buf);
 	return (str);
 }
