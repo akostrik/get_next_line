@@ -6,7 +6,7 @@
 /*   By: akostrik <akostrik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 13:46:18 by akostrik          #+#    #+#             */
-/*   Updated: 2022/12/27 23:51:29 by akostrik         ###   ########.fr       */
+/*   Updated: 2022/12/28 00:06:10 by akostrik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@
 #include "get_next_line.h"
 #include <string.h>
 
-void	print_lst_buf(t_buf **lst_buf)
+/*void	print_lst_buf(t_buf **lst_buf)
 {
 	t_buf	*cour;
 	ssize_t	i;
@@ -74,7 +74,7 @@ void	print_lst_buf(t_buf **lst_buf)
 		cour = cour -> next;
 		j++;
 	}
-}
+}*/
 
 void free_lst_buf(t_buf **lst_buf)
 {
@@ -95,16 +95,6 @@ void free_lst_buf(t_buf **lst_buf)
 		}
 		*lst_buf = NULL;
 	}
-}
-
-ssize_t first_newline_pos_f(t_buf	*buf)
-{
-	ssize_t	i;
-
-	i = buf -> first_pos;
-	while (i <= buf -> last_pos && buf->str[i] != '\n')
-		i++;
-	return (i);
 }
 
 ssize_t	read_to_buf_and_add_to_lst(int fd, t_buf **lst_buf)
@@ -132,7 +122,9 @@ ssize_t	read_to_buf_and_add_to_lst(int fd, t_buf **lst_buf)
 	{
 		new_buf -> first_pos = 0;
 		new_buf -> last_pos = nb_bytes - 1;
-		new_buf -> first_newline_pos = first_newline_pos_f(new_buf);
+		new_buf -> first_newline_pos = new_buf -> first_pos;
+		while (new_buf -> first_newline_pos <= new_buf -> last_pos && new_buf->str[new_buf -> first_newline_pos] != '\n')
+			(new_buf -> first_newline_pos)++;
 		if (nb_bytes < BUFFER_SIZE)
 		{
 			new_buf -> last_pos ++;
@@ -167,7 +159,7 @@ char *concat_buffers_and_update_lst(t_buf **lst_buf)
 
 	cour = *lst_buf;
 	i = 0;
-	while (cour != NULL && cour -> next != NULL) // заодно посчитать ддину
+	while (cour != NULL && cour -> next != NULL)
 	{
 		i += cour -> first_newline_pos - cour -> first_pos;
 		cour = cour -> next;
@@ -188,7 +180,9 @@ char *concat_buffers_and_update_lst(t_buf **lst_buf)
 			i++;
 		}
 		cour -> first_pos = cour -> first_newline_pos + 1;
-		cour -> first_newline_pos = first_newline_pos_f(cour);
+		cour -> first_newline_pos = cour -> first_pos;
+		while (cour -> first_newline_pos <= cour -> last_pos && cour->str[cour -> first_newline_pos] != '\n')
+			cour -> first_newline_pos++;
 		if (i <= cour -> last_pos)
 				break ;
 		if (cour -> prev == NULL)
