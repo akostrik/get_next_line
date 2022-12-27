@@ -6,7 +6,7 @@
 /*   By: akostrik <akostrik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 13:46:18 by akostrik          #+#    #+#             */
-/*   Updated: 2022/12/27 22:58:34 by akostrik         ###   ########.fr       */
+/*   Updated: 2022/12/27 23:13:11 by akostrik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -220,12 +220,11 @@ char *concat_buffers_and_update_lst(t_buf **lst_buf)
 		}
 		cour -> first_pos = cour -> first_newline_pos + 1;
 		cour -> first_newline_pos = first_newline_pos_f(cour);
-		//printf("i = %zd <= last_pos = %zd ? \n",i,cour->last_pos);
 		if (i <= cour -> last_pos)
 		{
 			if ( i == cour -> last_pos -1 && cour -> str[cour->last_pos] == EOF) // в буфере что-то есть
-				; //printf("буфер почти полный, в конце EOF\n");
-			else // в буфере что-то есть
+				{ break; }//printf("буфер почти полный, в конце EOF\n"); // 43_with_nl + 42 не удалять буфер
+			else
 			{
 				//printf("в буфере что-то осталось\n");
 				break ;
@@ -233,7 +232,6 @@ char *concat_buffers_and_update_lst(t_buf **lst_buf)
 		}
 		else
 			{}//printf("буфер полный удалить %p\n",cour);
-		//print_lst_buf(lst_buf);
 
 		//if (cour == NULL) // ?
 			//break ;
