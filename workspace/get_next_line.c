@@ -6,7 +6,7 @@
 /*   By: akostrik <akostrik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 13:46:18 by akostrik          #+#    #+#             */
-/*   Updated: 2022/12/27 11:27:55 by akostrik         ###   ########.fr       */
+/*   Updated: 2022/12/27 17:35:07 by akostrik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@
 
 // get_next_line_utils.c the helper functions
 // File changed since the last call whereas read didn’t reach EOF -> undef. behavior
-// Binary file -> undef. behavior
+// Binary file -> undef. behaviorfv
 // Don’t read the whole file and then process each line
 
 // free(указателю полученных не из malloc) например, free(p+10) - неопр поведение
@@ -79,14 +79,35 @@ void	print_lst_buf(t_buf **lst_buf)
 	}
 }
 
-size_t first_newline_pos_f(t_buf	*buf)
+void free_lst_buf(t_buf **lst_buf)
+{
+	t_buf	*cour;
+	t_buf	*next;
+
+	if (lst_buf == NULL)
+		return ;
+	cour = *lst_buf;
+	while (cour != NULL)
+	{
+		next = cour -> next;
+		//if (i <= cour -> last_pos) // в буфере что-то есть
+		//printf("cour->str    - %p\n",cour->str);
+		free(cour->str);
+		//printf("cour         - %p\n",cour);
+		free(cour);
+		cour = next;
+	}
+	*lst_buf = NULL;
+}
+
+ssize_t first_newline_pos_f(t_buf	*buf)
 {
 	ssize_t	i;
 
-	if (buf -> last_pos == -1)
+	if (buf -> last_pos == -1) // 0 ?
 		return (1);
 	i = buf -> first_pos;
-	while (i <= buf -> last_pos && buf->str[i] != '\n') // EOF ?
+	while (i <= buf -> last_pos && buf->str[i] != '\n' && buf->str[i] != EOF) // EOF ?
 		i++;
 	return (i);
 }
@@ -101,21 +122,21 @@ ssize_t	read_to_buf_and_add_to_lst(int fd, t_buf **lst_buf)
 	{
 		return ((ssize_t)(-1));
 	}
-	printf("new_buf      + %p\n",new_buf);
+	//printf("new_buf      + %p\n",new_buf);
 	new_buf->str = (char *)malloc(BUFFER_SIZE * sizeof(char));
 	if (new_buf->str == NULL)
 	{
-		printf("new_buf     - %p\n",new_buf);
+		//printf("new_buf     - %p\n",new_buf);
 		free(new_buf);
 		return ((ssize_t)(-1));
 	}
-	printf("new_buf->str + %p\n",new_buf->str);
+	//printf("new_buf->str + %p\n",new_buf->str);
 	nb_bytes = read(fd, new_buf->str, BUFFER_SIZE);
 	if (nb_bytes == -1)
 	{
-		printf("new_buf->str - %p\n",new_buf->str);
+		//printf("new_buf->str - %p\n",new_buf->str);
 		free(new_buf -> str);
-		printf("new_buf      - %p\n",new_buf);
+		//printf("new_buf      - %p\n",new_buf);
 		free(new_buf);
 		return ((ssize_t)(-1));
 	}
@@ -127,8 +148,8 @@ ssize_t	read_to_buf_and_add_to_lst(int fd, t_buf **lst_buf)
 		new_buf -> prev = NULL;
 		if (nb_bytes < BUFFER_SIZE)
 		{
-		new_buf -> last_pos ++;
-			new_buf -> str[nb_bytes] = EOF; ///
+			new_buf -> last_pos ++;
+			new_buf -> str[nb_bytes] = EOF;
 		}
 		if (lst_buf == NULL)
 			new_buf->next = NULL;
@@ -157,7 +178,7 @@ size_t	string_len(t_buf **lst_buf)
 		len += cour -> first_newline_pos - cour -> first_pos;
 		cour = cour -> next;
 	}
-	return (len + 1);
+	return (len + 2); // \0, EOF
 }
 
 char *concat_buffers_and_update_lst(t_buf **lst_buf)
@@ -165,22 +186,28 @@ char *concat_buffers_and_update_lst(t_buf **lst_buf)
 	t_buf	*cour;
 	t_buf	*to_free;
 	size_t	i_str;
-	ssize_t	i; ///
+	ssize_t	i;
 	char		*str;
 
-	//printf("concat_buffers\n");
+	//printf("concat buf ");
 	//print_lst_buf(lst_buf);
+
 	if (*lst_buf == NULL)
-		return ("");
+		return (""); // ?
+
+	cour = *lst_buf;
+	//printf("cour = %p, cour->str = [%s] \n",cour, cour->str);
+	while (cour != NULL && cour -> next != NULL) // заодно посчитать ддину
+	{
+		cour = cour -> next;
+		//printf("cour = %p, cour->str = [%s] \n",cour, cour->str);
+	}
 	str = (char *)malloc(string_len(lst_buf));
 	if (str == NULL)
 		return (NULL);
-	printf("str          + %p\n",str);
 	i_str = 0;
-	cour = *lst_buf;
-	while (cour != NULL && cour -> next != NULL)
-		cour = cour -> next;
-	while (cour != NULL)
+
+	while (cour != NULL) 
 	{
 		i = cour -> first_pos;
 		while (i <= cour -> first_newline_pos && i <= cour -> last_pos)
@@ -194,44 +221,27 @@ char *concat_buffers_and_update_lst(t_buf **lst_buf)
 		if (i <= cour -> last_pos) // в буфере что-то есть
 			break;
 		to_free = cour;
-		printf("to_free->str - %p\n",to_free->str);
-		free(to_free->str);
-		printf("to_free      - %p\n",to_free);
-		free(to_free);
-		cour = cour -> prev;
 		if (cour == NULL)
-		{
-			*lst_buf = NULL;
 			break;
-		}
+		cour = cour -> prev;
+		if (cour == NULL) // double
+			break;
 		cour -> next = NULL;
+		//printf("to_free->str - %p\n",to_free->str);
+		free(to_free->str);
+		//printf("to_free      - %p\n",to_free);
+		free(to_free);
 	}
-	str[i_str] = '\0';
-	return (str);
-}
-
-void free_lst_buf(t_buf **lst_buf)
-{
-	t_buf	*cour;
-	t_buf	*next;
-
-	//printf("free lst buf\n");
-	//print_lst_buf(lst_buf);
-	if (lst_buf == NULL)
-		return ;
-	cour = *lst_buf;
-	while (cour != NULL)
+	if (str[0] == EOF) ////////////////////////////////////////////
 	{
-		next = cour -> next;
-		//if (i <= cour -> last_pos) // в буфере что-то есть
-		printf("cour->str    - %p\n",cour->str);
-		free(cour->str);
-		printf("cour         - %p\n",cour);
-		free(cour);
-		cour = next;
-		//printf("cour = %p\n",cour);
+		free(str);
+		return(NULL);
 	}
-	*lst_buf = NULL;
+	if (str[i_str - 1] == EOF) 
+		str[i_str - 1] = '\0';
+	else
+		str[i_str] = '\0';
+	return (str);
 }
 
 char *get_next_line(int fd)
@@ -247,38 +257,47 @@ char *get_next_line(int fd)
 		if (lst_buf == NULL)
 			return (NULL);
 		*lst_buf = NULL;
-		printf("\nlst_buf      + %p -> %p\n-----------------------\n",lst_buf,*lst_buf);
 	}
 	i = 0;
 	while (1)
 	{
-		if (lst_buf != NULL && *lst_buf != NULL && (*lst_buf)->first_newline_pos <= (*lst_buf) -> last_pos)
+		//printf("\nwhile\n");
+		//print_lst_buf(lst_buf);
+		if (lst_buf != NULL && *lst_buf != NULL && (*lst_buf)->first_newline_pos <= (*lst_buf) -> last_pos) // присутствует  \n
+		{
+			//printf("*********************************** присутствует \\n\n");
 			break ;
+		}
+		if (*lst_buf != NULL && (*lst_buf)->str[(*lst_buf)->last_pos] == EOF) // присутствует EOF
+		{
+			//printf("*********************************** присутствует EOF 1\n");
+			break ;
+		}
 		nb_bytes = read_to_buf_and_add_to_lst(fd, lst_buf);
 		if (nb_bytes == -1)
 		{
 			free_lst_buf(lst_buf);
-			return (NULL);
+			return (NULL); // break
 		}
 		if (nb_bytes == 0 && i == 0)
 		{
-			//printf("empty file\n");
-			free_lst_buf(lst_buf);
-			return (NULL);
+			//printf("*********************************** file = EOF, i = %zu\n",i);
+			break; //return (NULL);
 		}
-		if (nb_bytes == 0)
+		if (nb_bytes == 0) // присутствует EOF
+		{
+			//printf("*********************************** buffer = EOF\n");
 			break ;
-		if (*lst_buf != NULL && (*lst_buf)->str[(*lst_buf)->last_pos] == EOF)
+		}
+		if (*lst_buf != NULL && (*lst_buf)->str[(*lst_buf)->last_pos] == EOF) // присутствует EOF
+		{
+			//printf("*********************************** присутствует EOF 2\n");
 			break ;
+		}
 		i++;
 	}
 	str = concat_buffers_and_update_lst(lst_buf);
 	if (*lst_buf != NULL && (*lst_buf)->str[(*lst_buf)->last_pos] == EOF)
-	{
 		free_lst_buf(lst_buf);
-		//printf("lst_buf      - %p\n",lst_buf);
-		//free (*lst_buf);
-		//lst_buf = NULL;
-	}
 	return (str);
 }
