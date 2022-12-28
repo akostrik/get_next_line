@@ -6,7 +6,7 @@
 /*   By: akostrik <akostrik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/28 01:42:08 by akostrik          #+#    #+#             */
-/*   Updated: 2022/12/28 02:28:03 by akostrik         ###   ########.fr       */
+/*   Updated: 2022/12/28 02:40:03 by akostrik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,14 +131,14 @@ void	func(t_buf **l, t_buf	*b, char *s, size_t *i_s)
 		b->p1 = b->p_nl + 1;
 		b->p_nl = b->p1;
 		while (b->p_nl <= b->p2 && b->str[b->p_nl] != '\n')
-			b -> p_nl++;
+			b->p_nl++;
 		if (i <= b->p2)
 			break ;
 		if (b->prv == NULL)
 		{
 			free(b->str);
 			free(b);
-			(*l) = NULL;
+			*l = NULL;
 			break ;
 		}
 		del = b;
@@ -165,8 +165,7 @@ char	*concat_buffers_and_update_lst(t_buf **l)
 		i += b -> p_nl - b -> p1;
 		b = b -> nxt;
 	}
-	i += b -> p_nl - b -> p1;
-	s = (char *)malloc(i + 2);
+	s = (char *)malloc(i + b -> p_nl - b -> p1 + 2);
 	if (s == NULL)
 		return (NULL);
 	i_s = 0;
