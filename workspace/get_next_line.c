@@ -6,7 +6,7 @@
 /*   By: akostrik <akostrik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 13:46:18 by akostrik          #+#    #+#             */
-/*   Updated: 2022/12/28 02:00:38 by akostrik         ###   ########.fr       */
+/*   Updated: 2022/12/28 02:12:25 by akostrik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,29 +38,29 @@
 
 char	*get_next_line(int fd)
 {
-	static t_buf	**lst = NULL;
+	static t_buf	**l = NULL;
 	char			*str;
 
-	if (lst == NULL)
+	if (l == NULL)
 	{
-		lst = (t_buf **)malloc(sizeof(t_buf *));
-		if (lst == NULL)
+		l = (t_buf **)malloc(sizeof(t_buf *));
+		if (l == NULL)
 			return (NULL);
-		*lst = NULL;
+		*l = NULL;
 	}
 	while (1)
 	{
-		if ((*lst != NULL && ((*lst)->p1 <= (*lst)->p2 || (*lst)->str[(*lst)->p2] == EOF)))
-			break ;
-		if (read_buf_and_add_to_lst(fd, lst) == -1)
+		if (*l != NULL)
+			if ((*l)->p_nl <= (*l)->p2 || (*l)->str[(*l)->p2] == EOF)
+				break ;
+		if (read_buf_and_add_to_lst(fd, l) == -1)
 		{
-			free_lst_buf(lst);
+			free_lst_buf(l);
 			return (NULL);
 		}
 	}
-	str = concat_buffers_and_update_lst(lst);
-	if (*lst != NULL && (*lst)->fst_pos == (*lst)->p2 && \
-	(*lst)->str[(*lst)->p2] == EOF)
-		free_lst_buf(lst);
+	str = concat_buffers_and_update_lst(l);
+	if (*l != NULL && (*l)->p1 == (*l)->p2 && (*l)->str[(*l)->p2] == EOF)
+		free_lst_buf(l);
 	return (str);
 }

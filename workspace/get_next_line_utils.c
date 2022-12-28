@@ -6,7 +6,7 @@
 /*   By: akostrik <akostrik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/28 01:42:08 by akostrik          #+#    #+#             */
-/*   Updated: 2022/12/28 02:00:57 by akostrik         ###   ########.fr       */
+/*   Updated: 2022/12/28 02:20:52 by akostrik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,49 +51,49 @@
 	}
 }*/
 
-void	free_lst_buf(t_buf **lst)
+void	free_lst_buf(t_buf **l)
 {
 	t_buf	*b;
 	t_buf	*next;
 
-	if (*lst != NULL)
+	if (*l != NULL)
 		return ;
-	b = *lst;
+	b = *l;
 	while (b != NULL)
 	{
-		next = b -> next;
+		next = b -> nxt;
 		free(b->str);
 		free(b);
 		b = next;
 	}
-	*lst = NULL;
+	*l = NULL;
 }
 
-void	fill_buf_and_add_to_lst(t_buf	*new, t_buf **lst, ssize_t	nb_bts)
+void	fill_buf_and_add_to_lst(t_buf	*new, t_buf **l, ssize_t	nb_bts)
 {
-	new->fst_pos = 0;
+	new->p1 = 0;
 	new->p2 = nb_bts - 1;
-	new->p1 = new->fst_pos;
-	while (new->p1 <= new->p2 && new->str[new->p1] != '\n')
-		(new->p1)++;
+	new->p_nl = new->p1;
+	while (new->p_nl <= new->p2 && new->str[new->p_nl] != '\n')
+		(new->p_nl)++;
 	if (nb_bts < BUFFER_SIZE)
 	{
 		new->p2 ++;
 		new->str[nb_bts] = EOF;
 	}
-	new->prev = NULL;
-	if (*lst == NULL)
-		new->next = NULL;
+	new->prv = NULL;
+	if (*l == NULL)
+		new->nxt = NULL;
 	else
 	{
-		new->next = *lst;
-		if (*lst != NULL)
-			(*lst)->prev = new;
+		new->nxt = *l;
+		if (*l != NULL)
+			(*l)->prv = new;
 	}
-	*lst = new;
+	*l = new;
 }
 
-ssize_t	read_buf_and_add_to_lst(int fd, t_buf **lst)
+ssize_t	read_buf_and_add_to_lst(int fd, t_buf **l)
 {
 	ssize_t	nb_bts;
 	t_buf	*new;
@@ -114,63 +114,62 @@ ssize_t	read_buf_and_add_to_lst(int fd, t_buf **lst)
 		free(new);
 		return (-1);
 	}
-	fill_buf_and_add_to_lst(new, lst, nb_bts);
+	fill_buf_and_add_to_lst(new, l, nb_bts);
 	return (nb_bts);
 }
 
-void	f(t_buf **lst, t_buf	*b, char *s, ssize_t *i, size_t *i_s, t_buf *del)
+void	func(t_buf **l, t_buf	*b, char *s, ssize_t *i, size_t *i_s)
 {
+	t_buf	*del;
+
 	while (b != NULL)
 	{
-		*i = b->fst_pos;
-		while (*i <= b->p1 && *i <= b->p2)
+		*i = b->p1;
+		while (*i <= b->p_nl && *i <= b->p2)
 			s[(*i_s)++] = b->str[(*i)++];
-		b->fst_pos = b->p1 + 1;
-		b->p1 = b->fst_pos;
-		while (b->p1 <= b->p2 && b->str[b->p1] != '\n')
-			b -> p1++;
+		b->p1 = b->p_nl + 1;
+		b->p_nl = b->p1;
+		while (b->p_nl <= b->p2 && b->str[b->p_nl] != '\n')
+			b -> p_nl++;
 		if (*i <= b->p2)
 			break ;
-		if (b->prev == NULL)
+		if (b->prv == NULL)
 		{
 			free(b->str);
 			free(b);
-			(*lst) = NULL;
+			(*l) = NULL;
 			break ;
 		}
 		del = b;
-		b = b->prev;
-		b->next = NULL;
+		b = b->prv;
+		b->nxt = NULL;
 		free(del->str);
 		free(del);
 	}
 }
 
-char	*concat_buffers_and_update_lst(t_buf **lst)
+char	*concat_buffers_and_update_lst(t_buf **l)
 {
 	t_buf	*b;
-	t_buf	*del;
 	ssize_t	i;
 	size_t	i_s;
 	char	*s;
 
-	if ((*lst)->fst_pos == (*lst)->p2 && (*lst)->str[(*lst)->p2] \
-	== EOF && (*lst)->next == NULL)
+	if ((*l)->p1 == (*l)->p2 && (*l)->str[(*l)->p2] == EOF && (*l)->nxt == NULL)
 		return (NULL);
 	i = 0;
-	b = *lst;
-	while (b != NULL && b -> next != NULL)
+	b = *l;
+	while (b != NULL && b -> nxt != NULL)
 	{
-		i += b -> p1 - b -> fst_pos;
-		b = b -> next;
+		i += b -> p_nl - b -> p1;
+		b = b -> nxt;
 	}
-	i += b -> p1 - b -> fst_pos;
+	i += b -> p_nl - b -> p1;
 	s = (char *)malloc(i + 2);
 	if (s == NULL)
 		return (NULL);
 	i_s = 0;
-	del = NULL;
-	f(lst, b, s, &i, &i_s, del);
+	func(l, b, s, &i, &i_s);
 	s[i_s] = '\0';
 	if (s[i_s - 1] == EOF)
 		s[i_s - 1] = '\0';
