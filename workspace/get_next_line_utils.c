@@ -6,7 +6,7 @@
 /*   By: akostrik <akostrik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/28 01:42:08 by akostrik          #+#    #+#             */
-/*   Updated: 2022/12/28 02:40:03 by akostrik         ###   ########.fr       */
+/*   Updated: 2022/12/28 09:28:29 by akostrik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,7 +118,7 @@ ssize_t	read_buf_and_add_to_lst(int fd, t_buf **l)
 	return (nb_bts);
 }
 
-void	func(t_buf **l, t_buf	*b, char *s, size_t *i_s)
+void	concat_update(t_buf **l, t_buf	*b, char *s, size_t *i_s)
 {
 	t_buf	*del;
 	ssize_t	i;
@@ -134,18 +134,14 @@ void	func(t_buf **l, t_buf	*b, char *s, size_t *i_s)
 			b->p_nl++;
 		if (i <= b->p2)
 			break ;
-		if (b->prv == NULL)
-		{
-			free(b->str);
-			free(b);
-			*l = NULL;
-			break ;
-		}
 		del = b;
 		b = b->prv;
-		b->nxt = NULL;
+		*l = del->prv;
 		free(del->str);
 		free(del);
+		if (b == NULL)
+			break ;
+		b->nxt = NULL;
 	}
 }
 
@@ -169,7 +165,7 @@ char	*concat_buffers_and_update_lst(t_buf **l)
 	if (s == NULL)
 		return (NULL);
 	i_s = 0;
-	func(l, b, s, &i_s);
+	concat_update(l, b, s, &i_s);
 	s[i_s] = '\0';
 	if (s[i_s - 1] == EOF)
 		s[i_s - 1] = '\0';
