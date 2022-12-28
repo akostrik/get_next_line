@@ -6,7 +6,7 @@
 /*   By: akostrik <akostrik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 13:46:18 by akostrik          #+#    #+#             */
-/*   Updated: 2022/12/28 01:48:47 by akostrik         ###   ########.fr       */
+/*   Updated: 2022/12/28 02:00:38 by akostrik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,10 +36,10 @@
 
 #include "get_next_line.h"
 
-char *get_next_line(int fd)
+char	*get_next_line(int fd)
 {
 	static t_buf	**lst = NULL;
-	char					*str;
+	char			*str;
 
 	if (lst == NULL)
 	{
@@ -50,9 +50,7 @@ char *get_next_line(int fd)
 	}
 	while (1)
 	{
-		if (*lst != NULL && (*lst)->nl_pos <= (*lst)->lst_pos)
-			break ;
-		if (*lst != NULL && (*lst)->str[(*lst)->lst_pos] == EOF)
+		if ((*lst != NULL && ((*lst)->p1 <= (*lst)->p2 || (*lst)->str[(*lst)->p2] == EOF)))
 			break ;
 		if (read_buf_and_add_to_lst(fd, lst) == -1)
 		{
@@ -61,8 +59,8 @@ char *get_next_line(int fd)
 		}
 	}
 	str = concat_buffers_and_update_lst(lst);
-	if (*lst != NULL && (*lst)->fst_pos ==  (*lst)->lst_pos && \
-	(*lst)->str[(*lst)->lst_pos] == EOF)
+	if (*lst != NULL && (*lst)->fst_pos == (*lst)->p2 && \
+	(*lst)->str[(*lst)->p2] == EOF)
 		free_lst_buf(lst);
 	return (str);
 }

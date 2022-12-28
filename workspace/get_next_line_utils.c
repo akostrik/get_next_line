@@ -6,7 +6,7 @@
 /*   By: akostrik <akostrik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/28 01:42:08 by akostrik          #+#    #+#             */
-/*   Updated: 2022/12/28 01:50:02 by akostrik         ###   ########.fr       */
+/*   Updated: 2022/12/28 02:00:57 by akostrik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,13 +72,13 @@ void	free_lst_buf(t_buf **lst)
 void	fill_buf_and_add_to_lst(t_buf	*new, t_buf **lst, ssize_t	nb_bts)
 {
 	new->fst_pos = 0;
-	new->lst_pos = nb_bts - 1;
-	new->nl_pos = new->fst_pos;
-	while (new->nl_pos <= new->lst_pos && new->str[new->nl_pos] != '\n')
-		(new->nl_pos)++;
+	new->p2 = nb_bts - 1;
+	new->p1 = new->fst_pos;
+	while (new->p1 <= new->p2 && new->str[new->p1] != '\n')
+		(new->p1)++;
 	if (nb_bts < BUFFER_SIZE)
 	{
-		new->lst_pos ++;
+		new->p2 ++;
 		new->str[nb_bts] = EOF;
 	}
 	new->prev = NULL;
@@ -96,7 +96,7 @@ void	fill_buf_and_add_to_lst(t_buf	*new, t_buf **lst, ssize_t	nb_bts)
 ssize_t	read_buf_and_add_to_lst(int fd, t_buf **lst)
 {
 	ssize_t	nb_bts;
-	t_buf		*new;
+	t_buf	*new;
 
 	new = (t_buf *)malloc(sizeof(t_buf));
 	if (new == NULL)
@@ -118,25 +118,25 @@ ssize_t	read_buf_and_add_to_lst(int fd, t_buf **lst)
 	return (nb_bts);
 }
 
-void f(t_buf **lst, t_buf	*b, char *s, ssize_t *i, size_t *i_s, t_buf *del)
+void	f(t_buf **lst, t_buf	*b, char *s, ssize_t *i, size_t *i_s, t_buf *del)
 {
 	while (b != NULL)
 	{
 		*i = b->fst_pos;
-		while (*i <= b->nl_pos && *i <= b->lst_pos)
+		while (*i <= b->p1 && *i <= b->p2)
 			s[(*i_s)++] = b->str[(*i)++];
-		b->fst_pos = b->nl_pos + 1;
-		b->nl_pos = b->fst_pos;
-		while (b->nl_pos <= b->lst_pos && b->str[b->nl_pos] != '\n')
-			b -> nl_pos++;
-		if (*i <= b->lst_pos)
+		b->fst_pos = b->p1 + 1;
+		b->p1 = b->fst_pos;
+		while (b->p1 <= b->p2 && b->str[b->p1] != '\n')
+			b -> p1++;
+		if (*i <= b->p2)
 			break ;
 		if (b->prev == NULL)
 		{
 			free(b->str);
 			free(b);
 			(*lst) = NULL;
-			break;
+			break ;
 		}
 		del = b;
 		b = b->prev;
@@ -146,25 +146,25 @@ void f(t_buf **lst, t_buf	*b, char *s, ssize_t *i, size_t *i_s, t_buf *del)
 	}
 }
 
-char *concat_buffers_and_update_lst(t_buf **lst)
+char	*concat_buffers_and_update_lst(t_buf **lst)
 {
-	t_buf		*b;
-	t_buf		*del;
+	t_buf	*b;
+	t_buf	*del;
 	ssize_t	i;
 	size_t	i_s;
-	char		*s;
+	char	*s;
 
-	if ((*lst)->fst_pos == (*lst)->lst_pos && (*lst)->str[(*lst)->lst_pos] == EOF \
-	&& (*lst)->next == NULL)
-		return(NULL);
+	if ((*lst)->fst_pos == (*lst)->p2 && (*lst)->str[(*lst)->p2] \
+	== EOF && (*lst)->next == NULL)
+		return (NULL);
 	i = 0;
 	b = *lst;
 	while (b != NULL && b -> next != NULL)
 	{
-		i += b -> nl_pos - b -> fst_pos;
+		i += b -> p1 - b -> fst_pos;
 		b = b -> next;
-	}	
-	i += b -> nl_pos - b -> fst_pos;
+	}
+	i += b -> p1 - b -> fst_pos;
 	s = (char *)malloc(i + 2);
 	if (s == NULL)
 		return (NULL);
