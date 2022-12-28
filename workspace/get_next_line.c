@@ -6,7 +6,7 @@
 /*   By: akostrik <akostrik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 13:46:18 by akostrik          #+#    #+#             */
-/*   Updated: 2022/12/28 12:59:30 by akostrik         ###   ########.fr       */
+/*   Updated: 2022/12/28 15:14:04 by akostrik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,6 @@
 char	*get_next_line(int fd)
 {
 	static t_buf	**l = NULL;
-	char			*str;
 
 	if (fd < 0)
 		return (NULL);
@@ -52,17 +51,13 @@ char	*get_next_line(int fd)
 	}
 	while (1)
 	{
-		if (*l != NULL)
-			if ((*l)->p_nl <= (*l)->p2 || (*l)->str[(*l)->p2] == EOF)
-				break ;
+		if (*l != NULL && ((*l)->pnl <= (*l)->p2 || (*l)->str[(*l)->p2] == EOF))
+			break ;
 		if (read_buf_and_add_to_lst(fd, l) == -1)
 		{
 			free_lst_buf(l);
 			return (NULL);
 		}
 	}
-	str = concat_buffers_and_update_lst(l);
-	if (*l != NULL && (*l)->p1 == (*l)->p2 && (*l)->str[(*l)->p2] == EOF)
-		free_lst_buf(l);
-	return (str);
+	return (concat_buffers_and_update_lst(l));
 }

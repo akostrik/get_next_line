@@ -6,7 +6,7 @@
 /*   By: akostrik <akostrik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/28 01:42:08 by akostrik          #+#    #+#             */
-/*   Updated: 2022/12/28 09:28:29 by akostrik         ###   ########.fr       */
+/*   Updated: 2022/12/28 15:15:34 by akostrik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,9 +73,9 @@ void	fill_buf_and_add_to_lst(t_buf	*new, t_buf **l, ssize_t	nb_bts)
 {
 	new->p1 = 0;
 	new->p2 = nb_bts - 1;
-	new->p_nl = new->p1;
-	while (new->p_nl <= new->p2 && new->str[new->p_nl] != '\n')
-		(new->p_nl)++;
+	new->pnl = new->p1;
+	while (new->pnl <= new->p2 && new->str[new->pnl] != '\n')
+		(new->pnl)++;
 	if (nb_bts < BUFFER_SIZE)
 	{
 		new->p2 ++;
@@ -126,12 +126,12 @@ void	concat_update(t_buf **l, t_buf	*b, char *s, size_t *i_s)
 	while (b != NULL)
 	{
 		i = b->p1;
-		while (i <= b->p_nl && i <= b->p2)
+		while (i <= b->pnl && i <= b->p2)
 			s[(*i_s)++] = b->str[i++];
-		b->p1 = b->p_nl + 1;
-		b->p_nl = b->p1;
-		while (b->p_nl <= b->p2 && b->str[b->p_nl] != '\n')
-			b->p_nl++;
+		b->p1 = b->pnl + 1;
+		b->pnl = b->p1;
+		while (b->pnl <= b->p2 && b->str[b->pnl] != '\n')
+			b->pnl++;
 		if (i <= b->p2)
 			break ;
 		del = b;
@@ -149,8 +149,8 @@ char	*concat_buffers_and_update_lst(t_buf **l)
 {
 	t_buf	*b;
 	ssize_t	i;
-	size_t	i_s;
 	char	*s;
+	size_t	i_s;
 
 	if ((*l)->p1 == (*l)->p2 && (*l)->str[(*l)->p2] == EOF && (*l)->nxt == NULL)
 		return (NULL);
@@ -158,10 +158,10 @@ char	*concat_buffers_and_update_lst(t_buf **l)
 	b = *l;
 	while (b != NULL && b -> nxt != NULL)
 	{
-		i += b -> p_nl - b -> p1;
+		i += b -> pnl - b -> p1;
 		b = b -> nxt;
 	}
-	s = (char *)malloc(i + b -> p_nl - b -> p1 + 2);
+	s = (char *)malloc(i + b -> pnl - b -> p1 + 2);
 	if (s == NULL)
 		return (NULL);
 	i_s = 0;
@@ -169,5 +169,7 @@ char	*concat_buffers_and_update_lst(t_buf **l)
 	s[i_s] = '\0';
 	if (s[i_s - 1] == EOF)
 		s[i_s - 1] = '\0';
+	if (*l != NULL && (*l)->p1 == (*l)->p2 && (*l)->str[(*l)->p2] == EOF)
+		free_lst_buf(l);
 	return (s);
 }
