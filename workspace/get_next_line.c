@@ -6,7 +6,7 @@
 /*   By: akostrik <akostrik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 13:46:18 by akostrik          #+#    #+#             */
-/*   Updated: 2022/12/28 00:50:33 by akostrik         ###   ########.fr       */
+/*   Updated: 2022/12/28 01:06:40 by akostrik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,67 +80,66 @@ void free_lst_buf(t_buf **lst_buf)
 {
 	t_buf	*cour;
 	t_buf	*next;
-
-	if (*lst_buf == NULL)
-		return ;
-	if ((*lst_buf) -> first_pos ==  (*lst_buf) -> last_pos && (*lst_buf)->str[(*lst_buf)->last_pos] == EOF)
+	
+	if (*lst_buf != NULL)
+		return ; // ?
+	cour = *lst_buf;
+	while (cour != NULL)
 	{
-		cour = *lst_buf;
-		while (cour != NULL)
-		{
-			next = cour -> next;
-			free(cour->str);
-			free(cour);
-			cour = next;
-		}
-		*lst_buf = NULL;
+		next = cour -> next;
+		free(cour->str);
+		free(cour);
+		cour = next;
 	}
+	*lst_buf = NULL;
 }
 
-ssize_t	read_to_buf_and_add_to_lst(int fd, t_buf **lst_buf)
+void fill_buf_and_add_to_lst(t_buf	*new_buf, t_buf **lst_buf, ssize_t	nb_bytes)
+{
+	new_buf -> first_pos = 0;
+	new_buf -> last_pos = nb_bytes - 1;
+	new_buf -> first_newline_pos = new_buf -> first_pos;
+	while (new_buf -> first_newline_pos <= new_buf -> last_pos && new_buf->str[new_buf -> first_newline_pos] != '\n')
+		(new_buf -> first_newline_pos)++;
+	if (nb_bytes < BUFFER_SIZE)
+	{
+		new_buf -> last_pos ++;
+		new_buf -> str[nb_bytes] = EOF;
+	}
+	new_buf -> prev = NULL;
+	if (*lst_buf == NULL)
+		new_buf->next = NULL;
+	else
+	{
+		new_buf->next = *lst_buf;
+		if (*lst_buf != NULL)
+			(*lst_buf) -> prev = new_buf;
+	}
+	*lst_buf = new_buf;
+}
+
+ssize_t	read_buf_and_add_to_lst(int fd, t_buf **lst_buf)
 {
 	ssize_t	nb_bytes;
 	t_buf	*new_buf;
 
 	new_buf = (t_buf *)malloc(sizeof(t_buf));
-	if (new_buf == NULL) 
-		return ((ssize_t)(-1));
+	if (new_buf == NULL)
+		return (-1);
 	new_buf->str = (char *)malloc(BUFFER_SIZE * sizeof(char));
 	if (new_buf->str == NULL)
 	{
 		free(new_buf);
-		return ((ssize_t)(-1));
+		return (-1);
 	}
 	nb_bytes = read(fd, new_buf->str, BUFFER_SIZE);
 	if (nb_bytes == -1)
 	{
 		free(new_buf -> str);
 		free(new_buf);
-		return ((ssize_t)(-1));
+		return (-1);
 	}
-	if (nb_bytes >= 0)
-	{
-		new_buf -> first_pos = 0;
-		new_buf -> last_pos = nb_bytes - 1;
-		new_buf -> first_newline_pos = new_buf -> first_pos;
-		while (new_buf -> first_newline_pos <= new_buf -> last_pos && new_buf->str[new_buf -> first_newline_pos] != '\n')
-			(new_buf -> first_newline_pos)++;
-		if (nb_bytes < BUFFER_SIZE)
-		{
-			new_buf -> last_pos ++;
-			new_buf -> str[nb_bytes] = EOF;
-		}
-		new_buf -> prev = NULL;
-		if (*lst_buf == NULL)
-			new_buf->next = NULL;
-		else
-		{
-			new_buf->next = *lst_buf;
-			if (*lst_buf != NULL)
-				(*lst_buf) -> prev = new_buf;
-		}
-		*lst_buf = new_buf;
-	}
+	fill_buf_and_add_to_lst(new_buf, lst_buf, nb_bytes);
 	return (nb_bytes);
 }
 
@@ -152,8 +151,6 @@ char *concat_buffers_and_update_lst(t_buf **lst_buf)
 	ssize_t	i;
 	char		*str;
 
-	if (*lst_buf == NULL)
-		return (""); // ?
 	if ((*lst_buf) -> first_pos == (*lst_buf) -> last_pos && (*lst_buf)->str[(*lst_buf)->last_pos] == EOF && (*lst_buf)->next == NULL)
 		return(NULL);
 	cour = *lst_buf;
@@ -179,7 +176,6 @@ char *concat_buffers_and_update_lst(t_buf **lst_buf)
 			cour -> first_newline_pos++;
 		if (i <= cour -> last_pos)
 				break ;
-				
 		if (cour -> prev == NULL)
 		{
 			free(cour->str);
@@ -217,13 +213,14 @@ char *get_next_line(int fd)
 			break ;
 		if (*lst_buf != NULL && (*lst_buf)->str[(*lst_buf)->last_pos] == EOF)
 			break ;
-		if (read_to_buf_and_add_to_lst(fd, lst_buf) == -1)
+		if (read_buf_and_add_to_lst(fd, lst_buf) == -1)
 		{
-			free_lst_buf(lst_buf);
+			//free_lst_buf(lst_buf);
 			return (NULL);
 		}
 	}
 	str = concat_buffers_and_update_lst(lst_buf);
-	free_lst_buf(lst_buf);
+	if (*lst_buf != NULL && (*lst_buf) -> first_pos ==  (*lst_buf) -> last_pos && (*lst_buf)->str[(*lst_buf)->last_pos] == EOF)
+		free_lst_buf(lst_buf);
 	return (str);
 }
