@@ -6,7 +6,7 @@
 /*   By: akostrik <akostrik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 12:24:00 by akostrik          #+#    #+#             */
-/*   Updated: 2022/12/28 02:20:21 by akostrik         ###   ########.fr       */
+/*   Updated: 2022/12/28 02:25:34 by akostrik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ void	free_lst_buf(t_buf **lst);
 void	fill_buf_and_add_to_lst(t_buf	*new, t_buf **lst, ssize_t	nb_bts);
 void	fill_buf_and_add_to_lst(t_buf	*new, t_buf **lst, ssize_t	nb_bts);
 ssize_t	read_buf_and_add_to_lst(int fd, t_buf **lst);
-void	func(t_buf **lst, t_buf	*b, char *s, ssize_t *i, size_t *i_s);
+void	func(t_buf **lst, t_buf	*b, char *s, size_t *i_s);
 char	*concat_buffers_and_update_lst(t_buf **lst);
 
 #endif

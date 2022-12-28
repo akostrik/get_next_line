@@ -6,7 +6,7 @@
 /*   By: akostrik <akostrik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/28 01:42:08 by akostrik          #+#    #+#             */
-/*   Updated: 2022/12/28 02:20:52 by akostrik         ###   ########.fr       */
+/*   Updated: 2022/12/28 02:28:03 by akostrik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,20 +118,21 @@ ssize_t	read_buf_and_add_to_lst(int fd, t_buf **l)
 	return (nb_bts);
 }
 
-void	func(t_buf **l, t_buf	*b, char *s, ssize_t *i, size_t *i_s)
+void	func(t_buf **l, t_buf	*b, char *s, size_t *i_s)
 {
 	t_buf	*del;
+	ssize_t	i;
 
 	while (b != NULL)
 	{
-		*i = b->p1;
-		while (*i <= b->p_nl && *i <= b->p2)
-			s[(*i_s)++] = b->str[(*i)++];
+		i = b->p1;
+		while (i <= b->p_nl && i <= b->p2)
+			s[(*i_s)++] = b->str[i++];
 		b->p1 = b->p_nl + 1;
 		b->p_nl = b->p1;
 		while (b->p_nl <= b->p2 && b->str[b->p_nl] != '\n')
 			b -> p_nl++;
-		if (*i <= b->p2)
+		if (i <= b->p2)
 			break ;
 		if (b->prv == NULL)
 		{
@@ -169,7 +170,7 @@ char	*concat_buffers_and_update_lst(t_buf **l)
 	if (s == NULL)
 		return (NULL);
 	i_s = 0;
-	func(l, b, s, &i, &i_s);
+	func(l, b, s, &i_s);
 	s[i_s] = '\0';
 	if (s[i_s - 1] == EOF)
 		s[i_s - 1] = '\0';
