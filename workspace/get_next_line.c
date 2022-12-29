@@ -6,7 +6,7 @@
 /*   By: akostrik <akostrik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 13:46:18 by akostrik          #+#    #+#             */
-/*   Updated: 2022/12/28 15:14:04 by akostrik         ###   ########.fr       */
+/*   Updated: 2022/12/29 02:32:47 by akostrik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@
 
 // get_next_line_utils.c the helper functions
 // File changed since the last call whereas read didn’t reach EOF -> undef beh
-// Binary file -> undef. behaviorfv
+// Binary file -> undef. behavior
 // Don’t read the whole file and then process each line
 
 // free(указателю не из malloc) например, free(p+10) - неопр поведение
@@ -44,7 +44,7 @@ char	*get_next_line(int fd)
 		return (NULL);
 	if (l == NULL)
 	{
-		l = (t_buf **)malloc(sizeof(t_buf *));
+		l = (t_buf **)malloc(sizeof(t_buf *)); // 8 bytes 
 		if (l == NULL)
 			return (NULL);
 		*l = NULL;
@@ -53,11 +53,12 @@ char	*get_next_line(int fd)
 	{
 		if (*l != NULL && ((*l)->pnl <= (*l)->p2 || (*l)->str[(*l)->p2] == EOF))
 			break ;
-		if (read_buf_and_add_to_lst(fd, l) == -1)
+		if (read_buf_and_add_to_l(fd, l) == -1)
 		{
-			free_lst_buf(l);
+			free_l(l);
 			return (NULL);
 		}
+		//print_l(l,"while");
 	}
-	return (concat_buffers_and_update_lst(l));
+	return (concat_buffers_and_update_lst(&l));
 }

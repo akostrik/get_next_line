@@ -1,0 +1,19 @@
+clear
+[H[2J[3Jcc -D BUFFER_SIZE=42 main.c workspace/get_next_line.c workspace/get_next_line_utils.c
+./a.out -e
+main [abc
+]
+
+-----------------
+main [def
+]
+
+-----------------
+main [
+]
+
+-----------------
+main [jijk]
+
+-----------------
+main [(null)]
