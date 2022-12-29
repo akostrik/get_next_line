@@ -6,7 +6,7 @@
 /*   By: akostrik <akostrik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 13:46:18 by akostrik          #+#    #+#             */
-/*   Updated: 2022/12/29 11:50:19 by akostrik         ###   ########.fr       */
+/*   Updated: 2022/12/29 12:22:00 by akostrik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,33 +39,24 @@
 char	*get_next_line(int fd)
 {
 	static t_buf	**l = NULL;
-	char	*s;
+	char			*s;
 
 	if (fd < 0)
 		return (NULL);
 	if (l == NULL)
 	{
-		l = (t_buf **)malloc(sizeof(t_buf *)); // 8 bytes 
+		l = (t_buf **)malloc(sizeof(t_buf *));
 		if (l == NULL)
 			return (NULL);
 		*l = NULL;
 	}
-	while (1)
-	{
-		if (*l != NULL && ((*l)->pnl <= (*l)->p2 || (*l)->str[(*l)->p2] == EOF))
-			break ;
+	while (*l == NULL || ((*l)->nl > (*l)->e && (*l)->s[(*l)->e] != EOF))
 		if (read_buf_and_add_to_l(fd, l) == -1)
-		{
-			free_l(l);
-			return (NULL);
-		}
-	}
-	s = concat_buffers_and_update_lst(&l);
-	if (*l != NULL && (*l)->p1 == (*l)->p2 && (*l)->str[(*l)->p2] == EOF)
-	{
-		free_l(l);
-		free(l);
-		l = NULL;
-	}
+			return (free_l_and_return_null(&l));
+	s = concat_buffers_and_update_lst(l);
+	if (s == NULL)
+		return (free_l_and_return_null(&l));
+	if (*l != NULL && (*l)->b == (*l)->e && (*l)->s[(*l)->e] == EOF)
+		free_l_and_return_null(&l);
 	return (s);
 }

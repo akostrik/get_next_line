@@ -6,13 +6,13 @@
 /*   By: akostrik <akostrik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 12:24:00 by akostrik          #+#    #+#             */
-/*   Updated: 2022/12/29 01:48:43 by akostrik         ###   ########.fr       */
+/*   Updated: 2022/12/29 12:13:55 by akostrik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-//	ssize_t		fst_pos; position of the first char
-//	ssize_t		lst_pos; position of the last char
-//	ssize_t		nl_pos;  position of the first newline character
+//	ssize_t		b; position of the first char
+//	ssize_t		e; position of the last char
+//	ssize_t		nl;  position of the first newline character
 
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
@@ -31,19 +31,19 @@
 
 typedef struct s_buf
 {
-	ssize_t			p1;
-	ssize_t			p2;
-	ssize_t			pnl;
-	char			*str;
+	ssize_t			b;
+	ssize_t			e;
+	ssize_t			nl;
+	char			*s;
 	struct s_buf	*nxt;
 	struct s_buf	*prv;
 }	t_buf;
 
 char	*get_next_line(int fd);
-ssize_t	read_buf_and_add_to_l(int fd, t_buf **lst);
-char	*concat_buffers_and_update_lst(t_buf ***lst);
-void	concat_update(t_buf **lst, t_buf	*b, char *s, size_t *i_s);
-void	free_l(t_buf **lst);
+ssize_t	read_buf_and_add_to_l(int fd, t_buf **l);
+char	*concat_buffers_and_update_lst(t_buf **l);
+void	concat_update(t_buf **l, t_buf	*b, char *s, size_t *i_s);
+void	*free_l_and_return_null(t_buf ***l);
 void	print_l(t_buf **l, char *comm);
 
 #endif
