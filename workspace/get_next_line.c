@@ -6,7 +6,7 @@
 /*   By: akostrik <akostrik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 13:46:18 by akostrik          #+#    #+#             */
-/*   Updated: 2022/12/29 11:43:37 by akostrik         ###   ########.fr       */
+/*   Updated: 2022/12/29 11:50:19 by akostrik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,12 +67,5 @@ char	*get_next_line(int fd)
 		free(l);
 		l = NULL;
 	}
-	if (l != NULL && *l != NULL && (*l)->p2 == -1 && (*l)->str[(*l)->p2] == EOF)
-	{
-		//printf("***************\n");
-		free_l(l);
-		//free(l);
-	}
-	//print_l(l,"get_next_line return");
 	return (s);
 }
