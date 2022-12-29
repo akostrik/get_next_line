@@ -6,7 +6,7 @@
 /*   By: akostrik <akostrik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 13:57:16 by akostrik          #+#    #+#             */
-/*   Updated: 2022/12/29 02:38:23 by akostrik         ###   ########.fr       */
+/*   Updated: 2022/12/29 11:29:23 by akostrik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,9 +35,12 @@ int main(void)
 	s = get_next_line(fd);
 	while (s)
 	{
-		printf("%s", s);
+		printf("main %s", s);
 		free (s);
 		s = get_next_line(fd);
 	}
 	printf("\n--The end--\n");
+	free (s);
+	s = get_next_line(fd);
+	printf("main %s", s);
 }

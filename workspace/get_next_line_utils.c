@@ -6,7 +6,7 @@
 /*   By: akostrik <akostrik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/28 01:42:08 by akostrik          #+#    #+#             */
-/*   Updated: 2022/12/29 02:32:53 by akostrik         ###   ########.fr       */
+/*   Updated: 2022/12/29 11:37:21 by akostrik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,8 +62,6 @@ void	free_l(t_buf **l)
 	t_buf	*b;
 	t_buf	*next;
 
-	if (*l != NULL)
-		return ;
 	b = *l;
 	while (b != NULL)
 	{
@@ -178,8 +176,5 @@ char	*concat_buffers_and_update_lst(t_buf ***l)
 	s[i_s] = '\0';
 	if (s[i_s - 1] == EOF)
 		s[i_s - 1] = '\0';
-	if (**l != NULL && (**l)->p1 == (**l)->p2 && (**l)->str[(**l)->p2] == EOF)
-		free_l(*l);
-	//print_l(*l,"concat_buffers after free(l)");
 	return (s);
 }
