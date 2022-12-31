@@ -6,13 +6,13 @@
 /*   By: akostrik <akostrik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/28 01:42:08 by akostrik          #+#    #+#             */
-/*   Updated: 2022/12/29 12:16:34 by akostrik         ###   ########.fr       */
+/*   Updated: 2022/12/30 14:43:53 by akostrik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-/*
-void	print_l(t_buf **l, char *comment)
+
+/*void	print_l(t_buf **l, char *comment)
 {
 	t_buf	*b;
 	ssize_t	i;
@@ -36,20 +36,20 @@ void	print_l(t_buf **l, char *comment)
 		printf("* %2zd * %p <-   ", j, b->prv);
 		printf("%p [",b);
 		i = 0;
-		while (i <= b->p2)
+		while (i <= b->e)
 		{
-			if (b->str[i] == '\n')
+			if (b->s[i] == '\n')
 				printf(" \\n ");
-			else if (b->str[i] == EOF)
+			else if (b->s[i] == EOF)
 				{
 					printf(" EOF ");
 					break ;
 				}
 			else
-				printf("%c",b->str[i]);
+				printf("%c",b->s[i]);
 			i++;
 		}
-		printf("] %zu %zu %zd", b->p1, b->pnl, b->p2);
+		printf("] %zu %zu %zd", b->b, b->nl, b->e);
 		printf("   -> %p", b->nxt);
 		printf("\n");
 		b = b -> nxt;
@@ -172,6 +172,8 @@ char	*concat_buffers_and_update_lst(t_buf **l)
 		return (NULL);
 	i_s = 0;
 	concat_update(l, b, s, &i_s);
+	if (i_s == 0)
+		return (NULL);
 	s[i_s] = '\0';
 	if (s[i_s - 1] == EOF)
 		s[i_s - 1] = '\0';

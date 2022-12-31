@@ -6,7 +6,7 @@
 /*   By: akostrik <akostrik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 13:46:18 by akostrik          #+#    #+#             */
-/*   Updated: 2022/12/29 12:22:20 by akostrik         ###   ########.fr       */
+/*   Updated: 2022/12/31 14:39:35 by akostrik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,8 @@ char	*get_next_line(int fd)
 	static t_buf	**l = NULL;
 	char			*s;
 
+	if (BUFFER_SIZE < 1)
+		return (NULL);
 	if (fd < 0)
 		return (NULL);
 	if (l == NULL)
