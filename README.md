@@ -124,6 +124,6 @@ stdin: 1.OK 2.OK 3.OK 4.OK 5.OK 6.OK 7.OK 8.OK 9.OK 10.OK
 
 --------------------------
 	
-Moulinette :
-You have been graded 100 on getnextline:
+Moulinette : You have been graded 100 on getnextline:
+
 basic_tests: GNL OK | bonus_tests: Compilation failed
