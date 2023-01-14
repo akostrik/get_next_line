@@ -6,7 +6,7 @@
 /*   By: akostrik <akostrik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/28 01:42:08 by akostrik          #+#    #+#             */
-/*   Updated: 2022/12/30 14:43:53 by akostrik         ###   ########.fr       */
+/*   Updated: 2023/01/14 05:09:26 by akostrik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ void	*free_l_and_return_null(t_buf ***l)
 	return (NULL);
 }
 
-void	fill_buf_and_add_to_l(t_buf	*new, t_buf **l, ssize_t	nb_bts)
+void	fill_buf_and_add_to_l(t_buf *new, t_buf **l, ssize_t nb_bts)
 {
 	new->b = 0;
 	new->e = nb_bts - 1;
