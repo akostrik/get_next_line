@@ -10,14 +10,14 @@
 #                                                                              #
 # **************************************************************************** #
 
-SRCS    = get_next_line_A.c get_next_line_utils_A.c
+SRCS    = get_next_line.c get_next_line_utils.c
 OBJS    = ${SRCS:.c=.o}
 HDRS    = .
 
 all: get_next_line_A.a
 
 get_next_line_A.a: ${OBJS}
-	cc -g $(OBJS) -o get_next_line_A 
+	cc -g $(OBJS) -o get_next_line 
 
 %.o: %.c 
 	cc -Wall -Wextra -Werror -c -o $@ $<
@@ -26,7 +26,7 @@ clean:
 	rm -f ${OBJS}
 
 fclean: clean
-	rm -f get_next_line_A.a
+	rm -f get_next_line.a
 
 re: fclean all
 
