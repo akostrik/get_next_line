@@ -34,7 +34,7 @@
 // malloc  записывает информацию в ячейку перед ячейкой с указателем
 // free(p+10) -> информация перед яч. (p+10) будет трактоваться как служебная
 
-#include "get_next_line_A.h"
+#include "get_next_line.h"
 
 char	*get_next_line(int fd)
 {
