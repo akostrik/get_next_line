@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line_A.h"
+#include "get_next_line.h"
 
 /*void	print_l(t_buf **l, char *comment)
 {
